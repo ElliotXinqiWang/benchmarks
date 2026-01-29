@@ -75,4 +75,12 @@ def get_parser(add_llm_config: bool = True) -> argparse.ArgumentParser:
         default=3,
         help="Maximum retries for instances that throw exceptions (default: 3)",
     )
+    parser.add_argument(
+        "--extra-tools",
+        type=str,
+        nargs="+",
+        default=[],
+        help="List of extra tool names to enable (e.g., --extra-tools fuzz_hypo fuzz_hypo_v2). "
+             "Available: fuzz_hypo, fuzz_hypo_agent, fuzz_hypo_v2",
+    )
     return parser

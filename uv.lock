@@ -1985,9 +1985,6 @@ dependencies = [
     { name = "unidiff" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/53/b4/68c59bb52c02390c087da17cf44b7131b2e758c8c7428573f544208ece6b/multi_swe_bench-1.1.1.tar.gz", hash = "sha256:fd4608aefa9781a6bdddf2b35d27d72a224157454e69689527bcac1104d3aee3", size = 1251842, upload-time = "2025-10-24T11:36:42.869Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/51/d2/7fdeb42549ea867c682009a248e6a8a29f88b31b2536dcac16fa4f92e89f/multi_swe_bench-1.1.1-py3-none-any.whl", hash = "sha256:7ed2d37e15488655a707352841f7c1b111534bef02f270cc9deb0a425f189a06", size = 4922570, upload-time = "2025-10-24T11:36:40.847Z" },
-]
 
 [[package]]
 name = "multidict"

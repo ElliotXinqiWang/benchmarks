@@ -5,3 +5,4 @@
 from openhands.tools.file_editor import FileEditorTool  # noqa: F401
 from openhands.tools.task_tracker import TaskTrackerTool  # noqa: F401
 from openhands.tools.terminal import TerminalTool  # noqa: F401
+from openhands.tools.fuzz_hypo import FuzzHypoTool  # noqa: F401

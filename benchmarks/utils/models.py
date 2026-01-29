@@ -71,6 +71,11 @@ class EvalMetadata(BaseModel):
         default=None,
         description="Laminar evaluation metadata",
     )
+    extra_tools: list[str] = Field(
+        default_factory=list,
+        description="List of extra tool names to enable (e.g., ['fuzz_hypo', 'fuzz_hypo_v2']). "
+                    "Available: fuzz_hypo, fuzz_hypo_agent, fuzz_hypo_v2",
+    )
 
 
 EvalInstanceID = str

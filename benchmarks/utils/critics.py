@@ -21,7 +21,6 @@ from openhands.sdk.critic import (
 )
 from openhands.sdk.event import LLMConvertibleEvent
 
-
 logger = get_logger(__name__)
 
 

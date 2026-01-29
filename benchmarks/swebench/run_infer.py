@@ -1,4 +1,5 @@
 import os
+import warnings
 from pathlib import Path
 from typing import List
 
@@ -32,6 +33,13 @@ from openhands.sdk.workspace import RemoteWorkspace
 from openhands.tools.preset.default import get_default_tools
 from openhands.workspace import APIRemoteWorkspace, DockerWorkspace
 
+# 抑制 litellm 的 DeprecationWarning
+warnings.filterwarnings(
+    "ignore",
+    category=DeprecationWarning,
+    message="There is no current event loop",
+    module="litellm",
+)
 
 logger = get_logger(__name__)
 
@@ -216,7 +224,11 @@ class SWEBenchEvaluation(Evaluation):
         tools = get_default_tools(
             # Disable browser tools in CLI mode
             enable_browser=False,
+            # Enable extra tools if specified
+            extra_tools=self.metadata.extra_tools,
         )
+        if self.metadata.extra_tools:
+            logger.info(f"Extra tools enabled: {self.metadata.extra_tools}, total tools: {[t.name for t in tools]}")
         agent = Agent(
             llm=self.metadata.llm,
             tools=tools,
@@ -360,6 +372,7 @@ def main() -> None:
         selected_instances_file=args.select,
         max_retries=args.max_retries,
         workspace_type=args.workspace,
+        extra_tools=args.extra_tools,
     )
 
     # Run orchestrator with a simple JSONL writer

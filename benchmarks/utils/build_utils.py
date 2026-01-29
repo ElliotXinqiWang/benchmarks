@@ -275,6 +275,26 @@ def get_build_parser() -> argparse.ArgumentParser:
     return parser
 
 
+def _image_exists_locally(image_ref: str) -> bool:
+    """
+    Check if a Docker image exists locally (not in remote registry).
+    This is used to avoid unnecessary rebuilds when the image is already available locally.
+    """
+    try:
+        result = subprocess.run(
+            ["docker", "images", "--format", "{{.Repository}}:{{.Tag}}", image_ref],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        if result.returncode == 0:
+            # Check if the image is in the output
+            return image_ref in result.stdout
+        return False
+    except (subprocess.TimeoutExpired, subprocess.SubprocessError):
+        return False
+
+
 def build_image(
     base_image: str,
     target_image: str,
@@ -290,18 +310,21 @@ def build_image(
         custom_tags=custom_tag,
         image=target_image,
         target=target,
-        # SWE-Bench only supports linux/amd64 images
-        platforms=["linux/amd64"],
         push=push,
         # Override git info to use SDK submodule info instead of benchmarks repo
         git_ref=git_ref,
         git_sha=git_sha,
         sdk_version=sdk_version,
+        # Disable automatic base tag generation to avoid duplicate tags
+        # We only want the custom tag (e.g., e8f73e7-sweb.eval.x86_64.django_1776_django-11333-source-minimal)
+        # not the base tag (e.g., e8f73e7-sweb.eval.x86_64.django_1776_django-11333_tag_lates-02695814cad3-source-minimal)
+        include_base_tag=False,
     )
     for t in opts.all_tags:
-        # Check if image exists or not
-        if image_exists(t):
-            logger.info("Image %s already exists. Skipping build.", t)
+        # Only check if image exists locally (not in remote registry)
+        # This prevents skipping builds when remote registry has an old version
+        if _image_exists_locally(t):
+            logger.info("Image %s already exists locally. Skipping build.", t)
             return BuildOutput(base_image=base_image, tags=[t], error=None)
     tags = build(opts)
     return BuildOutput(base_image=base_image, tags=tags, error=None)
@@ -451,13 +474,10 @@ def build_all_images(
     mu = Lock()
 
     # Batch/prune settings (tunable via env to control disk usage on sticky runners)
-    # Default to smaller batches and more aggressive pruning on shared runners.
-    batch_size = int(os.getenv("BUILD_BATCH_SIZE", "15"))
-    prune_keep_storage_gb = int(os.getenv("BUILDKIT_PRUNE_KEEP_GB", "60"))
-    prune_threshold_pct = float(os.getenv("BUILDKIT_PRUNE_THRESHOLD_PCT", "60"))
-    # Prune aggressively by default; filters like "unused-for=12h" prevented GC from
-    # reclaiming layers created during the current run, leading to disk exhaustion.
-    prune_filters: list[str] | None = None
+    batch_size = int(os.getenv("BUILD_BATCH_SIZE", "25"))
+    prune_keep_storage_gb = int(os.getenv("BUILDKIT_PRUNE_KEEP_GB", "120"))
+    prune_threshold_pct = float(os.getenv("BUILDKIT_PRUNE_THRESHOLD_PCT", "70"))
+    prune_filters: list[str] | None = ["unused-for=12h"]
 
     def _chunks(seq: list[str], size: int):
         if size <= 0:

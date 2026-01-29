@@ -10,6 +10,7 @@ Example:
 """
 
 import sys
+import warnings
 from pathlib import Path
 
 from benchmarks.utils.build_utils import (
@@ -23,6 +24,13 @@ from benchmarks.utils.dataset import get_dataset
 from benchmarks.utils.image_utils import image_exists
 from openhands.sdk import get_logger
 
+# 抑制 litellm 的 DeprecationWarning
+warnings.filterwarnings(
+    "ignore",
+    category=DeprecationWarning,
+    message="There is no current event loop",
+    module="litellm",
+)
 
 logger = get_logger(__name__)
 WRAPPER_DOCKERFILE = Path(__file__).with_name("Dockerfile.swebench-deps")

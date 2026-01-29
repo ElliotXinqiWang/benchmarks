@@ -1,0 +1,198 @@
+I have access to a python code repository in the directory {{ instance.repo_path }} . You can explore and modify files using the available tools. Consider the following issue description:
+
+<issue_description>
+{{ instance.problem_statement }}
+</issue_description>
+
+Can you help me implement the necessary changes to the repository so that the requirements specified in the <issue_description> are met?
+I've already taken care of all changes to any of the test files described in the <issue_description>. This means you DON'T have to modify the testing logic or any of the tests in any way!
+Also the development Python environment is already set up for you (i.e., all dependencies already installed), so you don't need to install other packages.
+Your task is to make the minimal changes to non-test files in the {{ instance.repo_path }} directory to ensure the <issue_description> is satisfied.
+
+Follow these phases to resolve the issue:
+
+Phase 1. READING: read the problem and reword it in clearer terms
+   1.1 If there are code or config snippets. Express in words any best practices or conventions in them.
+   1.2 Highlight message errors, method names, variables, file names, stack traces, and technical details.
+   1.3 Explain the problem in clear terms.
+   1.4 Enumerate the steps to reproduce the problem.
+   1.5 Highlight any best practices to take into account when testing and fixing the issue
+
+Phase 2. RUNNING: install and run the tests on the repository
+   2.1 Activate the environment by running  
+       source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed
+   2.2 Install the package in development mode to ensure your changes are reflected:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This is CRITICAL: Python imports use the installed package, not the source files directly.
+       Without this step, your code changes will NOT be visible when running tests or importing the module.
+   2.3 Follow the readme
+   2.4 Install the environment and anything needed
+   2.5 Iterate and figure out how to run the tests
+
+Phase 3. EXPLORATION: find the files that are related to the problem and possible solutions
+   3.1 Use `grep` to search for relevant methods, classes, keywords and error messages.
+   3.2 Identify all files related to the problem statement.
+   3.3 Propose the methods and files to fix the issue and explain why.
+   3.4 From the possible file locations, select the most likely location to fix the issue.
+
+Phase 4. TEST CREATION: before implementing any fix, create a script to reproduce and verify the issue.
+   4.1 Look at existing test files in the repository to understand the test format/structure.
+   4.2 Create a minimal reproduction script that reproduces the located issue.
+   4.3 Run the reproduction script to confirm you are reproducing the issue.
+   4.4 Adjust the reproduction script as necessary.
+
+Phase 4.5. FUZZ TESTING WITH ROOT CAUSE ANALYSIS: use the fuzz_hypo_v2 tool to discover bugs AND trace their root causes.
+   
+   **CRITICAL: The fuzz_hypo_v2 tool helps you find the TRUE root cause, not just symptoms!**
+   
+   4.5.1 Identify the key functions that need to be tested based on the issue description.
+   
+   4.5.2 Start with initial fuzzing (let the tool auto-generate specs):
+       ```
+       fuzz_hypo_v2(
+           target="module:function",
+           issue_description="<paste relevant parts of issue>",
+           mode="quick"
+       )
+       ```
+   
+   4.5.3 **IMPORTANT: Check if bug is ROOT CAUSE or SYMPTOM**
+       When fuzz_hypo_v2 finds a bug, it returns:
+       - `is_root_cause`: True if this is where to fix, False if it's just a symptom
+       - `upstream_candidates`: List of functions to investigate if this is a symptom
+       - `suggested_fix_locations`: Priority-ordered list of where to apply fixes
+       
+       IF `is_root_cause` is False or `status` is "needs_upstream_analysis":
+       - DO NOT fix this function yet!
+       - Use fuzz_hypo_v2 on the `upstream_candidates` to find the true root cause
+       - Example:
+         ```
+         fuzz_hypo_v2(target="<upstream_candidate>", mode="analyze")
+         ```
+   
+   4.5.4 Use iterative mode for complex issues:
+       ```
+       fuzz_hypo_v2(
+           target="module:function",
+           mode="iterative"
+       )
+       ```
+       This will automatically:
+       - Fuzz the target and related functions
+       - Trace upstream to find root causes
+       - Report all findings with priority order
+   
+   4.5.5 For deep testing of critical functions:
+       ```
+       fuzz_hypo_v2(target="module:function", mode="deep")
+       ```
+   
+   4.5.6 Document your findings:
+       - Which functions show symptoms?
+       - Which function is the TRUE root cause?
+       - What specific inputs trigger the bug?
+       - What is the recommended fix strategy?
+
+Phase 5. FIX ANALYSIS: state clearly the problem and how to fix it
+   5.1 State clearly what the problem is.
+   5.2 State clearly where the problem is located.
+   5.3 **CRITICAL**: Based on fuzz_hypo_v2 root cause analysis:
+       - If multiple functions showed bugs, which one is the ROOT CAUSE?
+       - Why are the other bugs just symptoms?
+       - What is the data flow that causes symptoms to appear downstream?
+   5.4 State clearly how the test reproduces the issue.
+   5.5 State clearly the best practices to take into account in the fix.
+   5.6 State clearly how to fix the problem at the ROOT CAUSE location.
+
+Phase 6. FIX IMPLEMENTATION: Edit the source code to implement your chosen solution.
+   6.1 Make minimal, focused changes to fix the issue AT THE ROOT CAUSE.
+   6.2 Consider the edge cases and boundary conditions discovered during fuzz testing.
+   6.3 Ensure your fix handles all the failing inputs found during fuzzing.
+   6.4 **DO NOT** fix symptom locations unless the root cause is already fixed.
+   6.5 IMPORTANT: After making code changes, reinstall the package to apply your modifications:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This ensures Python imports your modified code instead of the old cached version.
+
+Phase 7. VERIFICATION: Test your implementation thoroughly using fuzz_hypo_v2.
+   7.1 Run your reproduction script to verify the fix works.
+   
+   7.2 **Verify fix with fuzz_hypo_v2**:
+       ```
+       fuzz_hypo_v2(
+           target="module:fixed_function",
+           previous_findings=["<failing_input_1>", "<failing_input_2>"],
+           mode="deep"
+       )
+       ```
+       Check that:
+       - `fix_verified` is True (previous failures now pass)
+       - `regression_detected` is False (no new issues)
+   
+   7.3 Verify symptoms are also resolved:
+       If you fixed a root cause, verify that downstream symptom locations no longer fail:
+       ```
+       fuzz_hypo_v2(target="module:symptom_function", mode="quick")
+       ```
+   
+   7.4 Run existing tests related to the modified code to ensure you haven't broken anything.
+   
+   7.5 If verification fails:
+       - Analyze new failing inputs
+       - Check if there are additional root causes
+       - Iterate until all tests pass
+
+8. FINAL REVIEW: Carefully re-read the problem description and compare your changes with the base commit {{ instance.base_commit }}.
+   8.1 Ensure you've fully addressed all requirements.
+   8.2 Run any tests in the repository related to:
+       8.2.1 The issue you are fixing
+       8.2.2 The files you modified
+       8.2.3 The functions you changed
+   8.3 Perform a final fuzz test pass on all modified functions:
+       ```
+       fuzz_hypo_v2(target="module:modified_func", mode="deep")
+       ```
+   8.4 If any tests fail, revise your implementation until all tests pass
+
+## Key Differences from fuzz_hypo (v1):
+
+| Feature | fuzz_hypo (v1) | fuzz_hypo_v2 |
+|---------|----------------|--------------|
+| Spec generation | Manual required | Auto-generated from code |
+| Root cause analysis | None | Automatic with confidence scores |
+| Upstream tracing | None | Suggests functions to investigate |
+| Fix verification | Basic | Checks regressions too |
+| Iterative testing | None | Multi-round fuzz-fix cycles |
+
+## Common Patterns:
+
+**Pattern 1: Simple bug fix**
+```
+# Find bug
+result = fuzz_hypo_v2(target="mod:func")
+if result.bug_found and result.is_root_cause:
+    # Fix here
+    ...
+```
+
+**Pattern 2: Tracing to root cause**
+```
+# Found symptom
+result = fuzz_hypo_v2(target="mod:symptom_func")
+# is_root_cause=False, upstream_candidates=["mod:caller_func"]
+
+# Trace upstream
+root = fuzz_hypo_v2(target="mod:caller_func", mode="analyze")
+# is_root_cause=True, fix HERE
+```
+
+**Pattern 3: Complex multi-function issue**
+```
+# Use iterative mode
+result = fuzz_hypo_v2(target="mod:entry_point", mode="iterative")
+# Returns all findings ordered by priority
+# Fix suggested_fix_locations[0] first
+```
+
+Be thorough in your exploration, testing, and reasoning. It's fine if your thinking process is lengthy - quality and completeness are more important than brevity. 
+
+**Remember: Always verify `is_root_cause` before fixing. Fixing symptoms wastes time and may not solve the real problem!**

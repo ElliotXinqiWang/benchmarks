@@ -51,12 +51,19 @@ def convert_to_swebench_format(
 
     converted_count = 0
     error_count = 0
+    empty_line_count = 0
+    missing_instance_id_count = 0
+    json_error_count = 0
+    other_error_count = 0
+    total_lines = 0
 
     with open(input_file, "r") as infile, open(output_file, "w") as outfile:
         for line_num, line in enumerate(infile, 1):
+            total_lines += 1
             try:
                 line = line.strip()
                 if not line:
+                    empty_line_count += 1
                     continue
 
                 data = json.loads(line)
@@ -65,6 +72,7 @@ def convert_to_swebench_format(
                 instance_id = data.get("instance_id")
                 if not instance_id:
                     logger.warning(f"Line {line_num}: Missing instance_id")
+                    missing_instance_id_count += 1
                     error_count += 1
                     continue
 
@@ -96,9 +104,11 @@ def convert_to_swebench_format(
 
             except json.JSONDecodeError as e:
                 logger.error(f"Line {line_num}: Invalid JSON - {e}")
+                json_error_count += 1
                 error_count += 1
             except Exception as e:
                 logger.error(f"Line {line_num}: Unexpected error - {e}")
+                other_error_count += 1
                 error_count += 1
 
     logger.info(
@@ -107,7 +117,22 @@ def convert_to_swebench_format(
     )
 
     if converted_count == 0:
-        raise ValueError("No valid entries were converted")
+        error_details = []
+        if total_lines == 0:
+            error_details.append("Input file is empty or could not be read")
+        else:
+            error_details.append(f"Total lines processed: {total_lines}")
+            if empty_line_count > 0:
+                error_details.append(f"Empty lines: {empty_line_count}")
+            if missing_instance_id_count > 0:
+                error_details.append(f"Missing instance_id: {missing_instance_id_count}")
+            if json_error_count > 0:
+                error_details.append(f"JSON decode errors: {json_error_count}")
+            if other_error_count > 0:
+                error_details.append(f"Other errors: {other_error_count}")
+        
+        error_msg = "No valid entries were converted. " + "; ".join(error_details)
+        raise ValueError(error_msg)
 
 
 def run_swebench_multimodal_evaluation(

@@ -1,0 +1,124 @@
+I have access to a python code repository in the directory {{ instance.repo_path }} . You can explore and modify files using the available tools. Consider the following issue description:
+
+<issue_description>
+{{ instance.problem_statement }}
+</issue_description>
+
+**IMPORTANT: Your primary goal is to use the fuzz_hypo tool to discover as many errors, edge cases, and potential bugs as possible in the codebase. Focus on finding issues rather than fixing them.**
+
+The development Python environment is already set up for you (i.e., all dependencies already installed), so you don't need to install other packages.
+
+Your task is to:
+1. Explore the codebase to understand its structure
+2. Identify functions that are critical, complex, or related to the issue description
+3. Use the fuzz_hypo tool extensively to test these functions and discover bugs
+4. Document all findings including failing inputs and failure types
+
+Follow these phases to maximize error discovery:
+
+Phase 1. READING AND UNDERSTANDING: Understand the problem and codebase structure
+   1.1 Read the issue description carefully and understand what it describes
+   1.2 Highlight message errors, method names, variables, file names, stack traces, and technical details mentioned
+   1.3 Explore the repository structure to get familiar with the codebase
+   1.4 Identify the main modules and components
+
+Phase 2. ENVIRONMENT SETUP: Ensure the testing environment is ready
+   2.1 Activate the environment by running  
+       source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed
+   2.2 Install the package in development mode to ensure code changes are reflected:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This is CRITICAL: Python imports use the installed package, not the source files directly.
+       Without this step, code changes will NOT be visible when running tests or importing the module.
+   2.3 Try to install the hypothesis package: pip install hypothesis
+       If the installation fails, you can skip this step and proceed without hypothesis.
+   2.4 Follow the readme to understand the project setup
+   2.5 Verify that the environment is working correctly
+
+Phase 3. EXPLORATION: Identify target functions for fuzzing
+   3.1 Use `grep` to search for relevant methods, classes, keywords and error messages mentioned in the issue
+   3.2 Identify all files related to the problem statement
+   3.3 Examine the code structure and identify functions that:
+       - Are directly related to the issue description
+       - Handle user inputs or external data
+       - Perform complex calculations or transformations
+       - Handle edge cases (boundary conditions, empty inputs, etc.)
+       - Are critical to the system's functionality
+   3.4 List all candidate functions for fuzz testing with their locations
+
+Phase 4. INTENSIVE FUZZ TESTING: Use fuzz_hypo extensively to find errors
+   4.1 For each identified function, analyze its signature and behavior:
+       - What are the input types and expected constraints?
+       - What are the expected outputs and invariants?
+       - What edge cases or boundary conditions exist?
+   
+   4.2 Create comprehensive specs for fuzz_hypo testing:
+       For each target function, create a structured spec that defines:
+       - Input types and constraints (pre-conditions)
+       - Expected behavior and output properties (post-conditions)
+       - Invariants that should always hold
+       - Edge cases to test
+   
+   4.3 Use fuzz_hypo tool systematically:
+       - Start with "quick" mode (200 iterations) for fast feedback on each function
+       - Test functions individually and systematically
+       - For functions that show issues in "quick" mode, use "deep" mode (2000 iterations) for thorough analysis
+       - Test multiple functions related to the issue, even if they seem unrelated at first
+       - Test helper functions, utility functions, and validation functions
+   
+   4.4 Analyze and document all fuzzing results:
+       - If bugs are found, document:
+         * The function name and location
+         * The failing input that triggered the bug
+         * The failure type (assertion error, exception, etc.)
+         * The error message or behavior
+         * Whether the bug is related to the issue description or a new discovery
+       - If no bugs are found initially, try:
+         * Different input strategies
+         * More complex specs with stricter constraints
+         * Testing related functions
+         * Using "deep" mode for more thorough testing
+   
+   4.5 Expand testing scope:
+       - Don't limit yourself to functions mentioned in the issue
+       - Test adjacent functions and dependencies
+       - Test error handling paths
+       - Test with boundary values and extreme inputs
+       - Test functions that process the outputs of other functions
+
+Phase 5. SYSTEMATIC ERROR DOCUMENTATION: Organize all findings
+   5.1 Create a comprehensive list of all discovered errors:
+       - Categorize errors by type (assertion failures, exceptions, incorrect behavior, etc.)
+       - Note which errors are directly related to the issue description
+       - Note which errors are newly discovered
+       - Prioritize errors by severity and impact
+   
+   5.2 For each discovered error, document:
+       - Function name and file location
+       - Complete failing input
+       - Expected vs actual behavior
+       - Steps to reproduce
+       - Potential impact
+
+Phase 6. ADDITIONAL TESTING: Continue exploring for more issues
+   6.1 Test integration points between functions
+   6.2 Test error handling and exception paths
+   6.3 Test with malformed or unexpected inputs
+   6.4 Test concurrent access scenarios if applicable
+   6.5 Use "debug" mode to inspect test harnesses if needed
+
+Phase 7. FINAL SUMMARY: Compile comprehensive error report
+   7.1 Summarize all discovered errors
+   7.2 Categorize errors by severity and relevance
+   7.3 Provide clear documentation of the most critical findings
+   7.4 Note any patterns or common issues across multiple functions
+
+**CRITICAL INSTRUCTIONS:**
+- Your goal is to FIND errors, not fix them
+- Use fuzz_hypo tool as extensively as possible
+- Test many different functions, not just the obvious ones
+- Document everything you find, even if it seems minor
+- Be thorough and systematic in your testing approach
+- Use multiple fuzz_hypo calls with different specs for the same function if needed
+- Prioritize testing functions related to the issue description, but also explore beyond
+
+Remember: The more errors you discover, the better. Don't stop after finding one or two issues - continue testing and exploring to find as many problems as possible.

@@ -9,6 +9,7 @@ import os
 import sys
 import time
 import traceback
+import warnings
 
 
 _MODAL_SITECUSTOMIZE_INJECTED = False
@@ -423,13 +424,34 @@ def _patch_modal_function_timeout(
         return result
 
     try:
-        patched_fn = mod.app.function(
-            image=image,
-            timeout=timeout_seconds,
-            include_source=True,
-            serialized=True,
-            name="run_instance_modal",
-        )(run_instance_modal_with_logging)
+        # Suppress Modal function name collision warning when replacing run_instance_modal
+        # Modal warnings may be issued via warnings module or logging, so we catch both
+        import logging
+        
+        # Suppress warnings module warnings
+        with warnings.catch_warnings():
+            warnings.filterwarnings(
+                "ignore",
+                message=".*function name.*collision.*",
+            )
+            # Also suppress logging warnings from modal-client logger
+            modal_logger = logging.getLogger("modal-client")
+            original_level = modal_logger.level
+            original_propagate = modal_logger.propagate
+            # Set to ERROR level and disable propagation to fully suppress WARNING messages
+            modal_logger.setLevel(logging.ERROR)
+            modal_logger.propagate = False
+            try:
+                patched_fn = mod.app.function(
+                    image=image,
+                    timeout=timeout_seconds,
+                    include_source=True,
+                    serialized=True,
+                    name="run_instance_modal",
+                )(run_instance_modal_with_logging)
+            finally:
+                modal_logger.setLevel(original_level)
+                modal_logger.propagate = original_propagate
     except Exception as exc:
         if log_errors:
             _log(f"[benchmarks] modal sitecustomize: failed to patch timeout: {exc}")
