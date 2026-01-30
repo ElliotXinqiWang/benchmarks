@@ -49,14 +49,14 @@ if [[ -z "$MODEL" || "$MODEL" == "null" ]]; then
     exit 1
 fi
 
-# 构建评估输出路径的基础部分
-# 格式: {output_dir}/princeton-nlp__SWE-bench_Verified-test/{model}_sdk_73769d5_maxiter_200_N_initial/output.jsonl
-MODEL_PATH_SUFFIX="${MODEL}_sdk_73769d5_maxiter_200_N_initial"
-DATASET_PATH="princeton-nlp__SWE-bench_Verified-test"
+# 动态获取 SDK submodule 的 short SHA（与 Python 代码中的 SDK_SHORT_SHA 保持一致）
+SDK_SHA=$(git submodule status vendor/software-agent-sdk | awk '{print $1}' | sed 's/^[+-]*//')
+SDK_SHORT_SHA="${SDK_SHA:0:7}"
 
-# 为输出文件名创建安全的后缀（将斜杠替换为下划线）
-MODEL_SAFE="${MODEL//\//_}"
-MODEL_SAFE_SUFFIX="${MODEL_SAFE}_sdk_73769d5_maxiter_200_N_initial"
+# 构建评估输出路径的基础部分
+# 格式: {output_dir}/princeton-nlp__SWE-bench_Verified-test/{model}_sdk_{sha}_maxiter_200_N_initial/output.jsonl
+MODEL_PATH_SUFFIX="${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial"
+DATASET_PATH="princeton-nlp__SWE-bench_Verified-test"
 
 # 从 INSTANCES_FILE 提取文件名（不含扩展名）作为子目录名
 INSTANCES_SUBDIR=$(basename "$INSTANCES_FILE" .txt)
@@ -89,7 +89,7 @@ uv run swebench-infer "$LLM_CONFIG" \
 
 uv run swebench-eval "./eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file results_fuzz_hypo_100_${INSTANCES_SUBDIR}_${MODEL_SAFE_SUFFIX}.swebench.jsonl \
+  --output-file "./eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
 
 
@@ -107,7 +107,7 @@ uv run swebench-infer "$LLM_CONFIG" \
 
 uv run swebench-eval "./eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file results_fuzz_hypo_final_${INSTANCES_SUBDIR}_${MODEL_SAFE_SUFFIX}.swebench.jsonl \
+  --output-file "./eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
 
 # Run with hypothesis prompt (no extra tools)
@@ -124,7 +124,7 @@ uv run swebench-infer "$LLM_CONFIG" \
 
 uv run swebench-eval "./eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file results_hypothesis_100_${INSTANCES_SUBDIR}_${MODEL_SAFE_SUFFIX}.swebench.jsonl \
+  --output-file "./eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
 
 
@@ -142,5 +142,5 @@ uv run swebench-infer "$LLM_CONFIG" \
 
 uv run swebench-eval "./eval_outputs_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file results_100_${INSTANCES_SUBDIR}_${MODEL_SAFE_SUFFIX}.swebench.jsonl \
+  --output-file "./eval_outputs_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
