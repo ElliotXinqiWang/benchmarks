@@ -1,7 +1,7 @@
 #!/bin/bash
 # bash 100_script.sh -i instances_100_2.txt -l .llm_config/openrouter.json && bash 100_script.sh -i instances_100_1.txt -l .llm_config/openrouter.json && bash 100_script.sh -i instances_100_2.txt -l .llm_config/openrouter_opus.json && bash 100_script.sh -i instances_100_1.txt -l .llm_config/openrouter_opus.json 
 # 默认值
-INSTANCES_FILE="instances_100_2.txt"
+INSTANCES_FILE="instance_set/instances_100_2.txt"
 LLM_CONFIG=".llm_config/openrouter.json"
 
 # 解析命令行参数
@@ -19,7 +19,7 @@ while [[ $# -gt 0 ]]; do
             echo "用法: $0 [选项]"
             echo ""
             echo "选项:"
-            echo "  -i, --instances <文件>    指定测试集文件 (默认: instances_100.txt)"
+            echo "  -i, --instances <文件>    指定测试集文件 (默认: instance_set/instances_100_2.txt)"
             echo "  -l, --llm-config <文件>   指定LLM配置文件 (默认: .llm_config/openrouter.json)"
             echo "  -h, --help                显示帮助信息"
             exit 0
@@ -78,7 +78,7 @@ uv run benchmarks/swebench/build_images.py \
 uv run swebench-infer "$LLM_CONFIG" \
     --select "$INSTANCES_FILE" \
     --workspace docker \
-    --output-dir "./eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}" \
+    --output-dir "./evaluation_results/eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}" \
     --max-attempts 3 \
     --max-iterations 200 \
     --max-retries 1 \
@@ -87,16 +87,16 @@ uv run swebench-infer "$LLM_CONFIG" \
     --prompt-path benchmarks/swebench/prompts/custom_fuzz_prompt.j2 \
     --n-limit 100
 
-uv run swebench-eval "./eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
+uv run swebench-eval "./evaluation_results/eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file "./eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
+  --output-file "./evaluation_results/eval_outputs_fuzz_hypo_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
 
 
 uv run swebench-infer "$LLM_CONFIG" \
     --select "$INSTANCES_FILE" \
     --workspace docker \
-    --output-dir "./eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}" \
+    --output-dir "./evaluation_results/eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}" \
     --max-attempts 3 \
     --max-iterations 200 \
     --max-retries 1 \
@@ -105,16 +105,16 @@ uv run swebench-infer "$LLM_CONFIG" \
     --prompt-path benchmarks/swebench/prompts/fuzz_final_only.j2 \
     --n-limit 100
 
-uv run swebench-eval "./eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
+uv run swebench-eval "./evaluation_results/eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file "./eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
+  --output-file "./evaluation_results/eval_outputs_fuzz_hypo_final/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
 
 # Run with hypothesis prompt (no extra tools)
 uv run swebench-infer "$LLM_CONFIG" \
     --select "$INSTANCES_FILE" \
     --workspace docker \
-    --output-dir "./eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}" \
+    --output-dir "./evaluation_results/eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}" \
     --max-attempts 3 \
     --max-iterations 200 \
     --max-retries 1 \
@@ -122,9 +122,9 @@ uv run swebench-infer "$LLM_CONFIG" \
     --prompt-path benchmarks/swebench/prompts/hypothesis_default.j2 \
     --n-limit 100
 
-uv run swebench-eval "./eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
+uv run swebench-eval "./evaluation_results/eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file "./eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
+  --output-file "./evaluation_results/eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
 
 
@@ -132,7 +132,7 @@ uv run swebench-eval "./eval_outputs_hypothesis_100/${INSTANCES_SUBDIR}/${DATASE
 uv run swebench-infer "$LLM_CONFIG" \
     --select "$INSTANCES_FILE" \
     --workspace docker \
-    --output-dir "./eval_outputs_100/${INSTANCES_SUBDIR}" \
+    --output-dir "./evaluation_results/eval_outputs_100/${INSTANCES_SUBDIR}" \
     --max-attempts 3 \
     --max-iterations 200 \
     --max-retries 1 \
@@ -140,7 +140,7 @@ uv run swebench-infer "$LLM_CONFIG" \
     --prompt-path benchmarks/swebench/prompts/default.j2 \
     --n-limit 100
 
-uv run swebench-eval "./eval_outputs_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
+uv run swebench-eval "./evaluation_results/eval_outputs_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl" \
   --dataset princeton-nlp/SWE-bench_Verified \
-  --output-file "./eval_outputs_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
+  --output-file "./evaluation_results/eval_outputs_100/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl" \
   --workers 5
