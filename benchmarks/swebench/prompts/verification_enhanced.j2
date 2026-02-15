@@ -1,0 +1,296 @@
+I have access to a python code repository in the directory {{ instance.repo_path }} . You can explore and modify files using the available tools. Consider the following issue description:
+
+<issue_description>
+{{ instance.problem_statement }}
+</issue_description>
+
+Can you help me implement the necessary changes to the repository so that the requirements specified in the <issue_description> are met?
+I've already taken care of all changes to any of the test files described in the <issue_description>. This means you DON'T have to modify the testing logic or any of the tests in any way!
+Also the development Python environment is already set up for you (i.e., all dependencies already installed), so you don't need to install other packages.
+Your task is to make the minimal changes to non-test files in the {{ instance.repo_path }} directory to ensure the <issue_description> is satisfied.
+
+Follow these phases to resolve the issue:
+
+Phase 1. READING: read the problem and reword it in clearer terms
+   1.1 If there are code or config snippets. Express in words any best practices or conventions in them.
+   1.2 Hightlight message errors, method names, variables, file names, stack traces, and technical details.
+   1.3 Explain the problem in clear terms.
+   1.4 Enumerate the steps to reproduce the problem.
+   1.5 Hightlight any best practices to take into account when testing and fixing the issue
+
+Phase 2. RUNNING: install and run the tests on the repository
+   2.1 Activate the environment by running
+       source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed
+   2.2 Install the package in development mode to ensure your changes are reflected:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This is CRITICAL: Python imports use the installed package, not the source files directly.
+       Without this step, your code changes will NOT be visible when running tests or importing the module.
+   2.3 Follow the readme
+   2.4 Install the environment and anything needed
+   2.5 Iterate and figure out how to run the tests
+
+Phase 3. EXPLORATION: find the files that are related to the problem and possible solutions
+   3.1 Use `grep` to search for relevant methods, classes, keywords and error messages.
+   3.2 Identify all files related to the problem statement.
+   3.3 Propose the methods and files to fix the issue and explain why.
+   3.4 From the possible file locations, select the most likely location to fix the issue.
+
+Phase 4. TEST CREATION: before implementing any fix, create a script to reproduce and verify the issue.
+   4.1 Look at existing test files in the repository to understand the test format/structure.
+   4.2 Create a minimal reproduction script that reproduces the located issue.
+   4.3 Run the reproduction script to confirm you are reproducing the issue.
+   4.4 Adjust the reproduction script as necessary.
+
+Phase 5. FIX ANALYSIS: state clearly the problem and how to fix it
+   5.1 State clearly what the problem is.
+   5.2 State clearly where the problem is located.
+   5.3 State clearly how the test reproduces the issue.
+   5.4 State clearly the best practices to take into account in the fix.
+   5.5 State clearly how to fix the problem.
+
+Phase 6. FIX IMPLEMENTATION: Edit the source code to implement your chosen solution.
+   6.1 Make minimal, focused changes to fix the issue.
+   6.2 IMPORTANT: After making code changes, reinstall the package to apply your modifications:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This ensures Python imports your modified code instead of the old cached version.
+
+Phase 7. VERIFICATION: Test your implementation thoroughly.
+   7.1 Run your reproduction script to verify the fix works.
+   7.2 Run existing tests related to the modified code to ensure you haven't broken anything.
+
+Phase 8. FINAL REVIEW: Carefully re-read the problem description and compare your changes with the base commit {{ instance.base_commit }}.
+   8.1 Ensure you've fully addressed all requirements.
+   8.2 Run any tests in the repository related to:
+     8.2.1 The issue you are fixing
+     8.2.2 The files you modified
+     8.2.3 The functions you changed
+   8.3 If any tests fail, revise your implementation until all tests pass
+
+======================================================================
+CRITICAL: PRE-SUBMISSION VERIFICATION CHECKLIST
+======================================================================
+
+Before you call the `finish` tool to submit your patch, you MUST complete the following verification checks and document your results in your think action.
+
+---
+
+✓ CHECK 1: I/O Round-trip Testing
+
+IF your patch modifies:
+- File read/write operations
+- Serialization/deserialization (pickle, JSON, etc.)
+- Format/parse functions (e.g., formatting output then parsing it back)
+- Data encoding/decoding
+
+THEN you MUST verify round-trip consistency:
+
+Example verification pattern:
+```python
+# Pattern 1: write → read consistency
+original_data = create_test_data()
+write_function(original_data, "/tmp/test_file")
+read_back = read_function("/tmp/test_file")
+assert read_back == original_data, f"Write-read mismatch: {original_data} vs {read_back}"
+
+# Pattern 2: format → parse consistency
+original_obj = create_test_object()
+formatted_str = format_function(original_obj)
+parsed_obj = parse_function(formatted_str)
+assert parsed_obj == original_obj, f"Format-parse mismatch: {original_obj} vs {parsed_obj}"
+```
+
+CRITICAL POINTS:
+- If you modified write logic, you MUST also test that read logic correctly reads it back
+- If you modified format logic, you MUST test that parse logic correctly parses it
+- Testing only one direction (write OR read) is INSUFFICIENT
+
+Example: If you fixed a bug in table.write(), you MUST verify table.read() works with the new format.
+
+---
+
+✓ CHECK 2: Differential Testing (for numerical/computational code)
+
+IF your patch modifies:
+- Mathematical calculations
+- Numerical algorithms
+- Data transformations
+- Scientific computations
+
+THEN you MUST verify against a reference implementation:
+
+```python
+import numpy as np  # or other standard library
+
+# Test against reference implementation
+test_inputs = [input1, input2, input3, ...]
+for inp in test_inputs:
+    your_result = your_modified_function(inp)
+    reference = numpy_equivalent(inp)  # or previous version baseline
+
+    np.testing.assert_allclose(
+        your_result, reference,
+        rtol=1e-10,
+        err_msg=f"Mismatch for {inp}: {your_result} vs {reference}"
+    )
+```
+
+If no reference implementation exists, at minimum verify:
+- Hand-calculated expected outputs for known inputs
+- Mathematical properties (e.g., idempotency: f(f(x)) == f(x))
+- Known invariants (e.g., sum of probabilities = 1.0)
+
+---
+
+✓ CHECK 3: Operator Precedence and Expression Correctness
+
+IF your patch modifies:
+- Operator overloading (__add__, __sub__, __or__, __and__, etc.)
+- Expression evaluation
+- Set/bitwise/arithmetic operations
+- Regular expressions or parser logic
+
+THEN you MUST verify operator precedence is correct:
+
+```python
+# Example: (A - B) | C  vs  A - (B | C) give DIFFERENT results!
+
+# Create test cases where precedence matters
+A = {1, 2, 3, 4}
+B = {2, 3}
+C = {3, 4, 5}
+
+# If you meant (A - B) | C:
+expected = {1, 4} | {3, 4, 5}  # = {1, 3, 4, 5}
+
+# Make sure your code doesn't accidentally do A - (B | C)
+wrong = {1, 2, 3, 4} - ({2, 3} | {3, 4, 5})  # Different result!
+
+result = your_expression_with_A_B_C()
+assert result == expected, f"Operator precedence error: {result} != {expected}"
+```
+
+KEY: Don't just test with the issue's minimal example. Create test cases with non-empty intersections/overlaps to trigger precedence bugs.
+
+---
+
+✓ CHECK 4: Boundary and Special Value Testing
+
+For each input parameter your code handles, test these boundary values:
+
+| Parameter Type | Required Boundary Values |
+|---------------|-------------------------|
+| Strings | "" (empty), " " (whitespace), very long strings, Unicode |
+| Numbers | 0, -1, negative values, NaN, Infinity, very large/small |
+| Collections | [] (empty), single element, all same elements, overlapping sets |
+| Paths | "path", "./path", "../x/path", absolute paths, paths with spaces |
+| Objects | None, subclass instances, mock objects |
+| Datetime | timezone-aware, timezone-naive, different timezones |
+
+---
+
+✓ CHECK 5: Regression Testing (Run Existing Tests)
+
+CRITICAL: Before submitting, run the existing test suite for modules you modified.
+
+Recommended workflow:
+```bash
+# 1. Before modifying code, record baseline (if possible)
+python -m pytest tests/relevant_module/ -v --tb=no > /tmp/baseline.txt 2>&1
+
+# 2. Apply your modifications
+
+# 3. Reinstall to ensure changes are reflected
+cd {{ instance.repo_path }} && pip install -e . --no-deps
+
+# 4. Run the same tests again
+python -m pytest tests/relevant_module/ -v --tb=short > /tmp/modified.txt 2>&1
+
+# 5. Check for regressions
+diff <(grep "PASSED" /tmp/baseline.txt | sort) \
+     <(grep "PASSED" /tmp/modified.txt | sort)
+```
+
+If any previously-passing test now fails, you MUST fix the regression before submitting.
+
+For large-scale refactoring (>50 lines or >3 files changed):
+- Run at least two related test modules
+- Run all tests for any classes where you modified __eq__, __hash__, __repr__, or other fundamental methods
+
+---
+
+✓ CHECK 6: Semantic Correctness (Not Just "No Crash")
+
+Don't just verify your code doesn't crash. Verify OUTPUT VALUES are correct.
+
+For query/filter modifications:
+```python
+# BAD: Just check it runs
+results = query.filter(...)  # No assertion → meaningless
+
+# GOOD: Check result set correctness
+results = query.filter(...)
+assert obj_should_be_included in results, "Expected object not found"
+assert obj_should_be_excluded not in results, "Unexpected object found"
+assert len(results) == expected_count, f"Expected {expected_count}, got {len(results)}"
+```
+
+For computation/formatting modifications:
+```python
+# BAD: No assertion on output
+formatted = format_value(input_data)
+
+# GOOD: Check rendered output
+formatted = format_value(input_data)
+assert formatted == "expected_string", f"Got: {formatted}"
+assert "%(placeholder)s" not in formatted, "Template not rendered"
+assert abs(float(formatted) - expected_value) < 1e-10, "Numerical error"
+```
+
+For serialization modifications:
+```python
+# BAD: Only check internal state
+fig2 = pickle.loads(pickle.dumps(fig))
+assert fig2._original_dpi == 42  # Internal attribute
+
+# GOOD: Check user-visible attributes
+fig2 = pickle.loads(pickle.dumps(fig))
+assert fig2.dpi == fig2._original_dpi, "User-visible dpi not restored"
+assert fig2.get_size_inches() == fig.get_size_inches(), "Size changed"
+```
+
+---
+
+EXECUTION REQUIREMENTS:
+
+Before calling `finish`:
+
+1. ✓ In your think action, explicitly state which checks apply to your patch
+2. ✓ For applicable checks, provide:
+   - The test code you wrote
+   - The execution results
+   - Whether it PASSED or FAILED
+3. ✓ For non-applicable checks, explain why they don't apply
+4. ✓ ONLY call `finish` if ALL applicable checks PASS
+
+If any verification fails:
+- Go back to Phase 6 (FIX IMPLEMENTATION)
+- Revise your code
+- Re-run ALL applicable verification checks
+- Repeat until all checks pass
+
+---
+
+WHY THIS MATTERS:
+
+Analysis of previous SWE-bench failures shows:
+- 69% of failures could have been caught by running existing tests (Check 5)
+- Round-trip bugs (Check 1) are extremely common in I/O code
+- Differential testing (Check 2) catches numerical correctness issues
+- Operator precedence bugs (Check 3) are often missed by single-example testing
+- Semantic verification (Check 6) prevents "doesn't crash but returns wrong values" bugs
+
+This checklist catches issues BEFORE submission, improving resolution rate and saving iteration time.
+
+======================================================================
+
+Be thorough in your exploration, testing, and reasoning. It's fine if your thinking process is lengthy - quality and completeness are more important than brevity.
