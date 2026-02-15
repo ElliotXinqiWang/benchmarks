@@ -1,0 +1,43 @@
+I have access to a python code repository in the directory {{ instance.repo_path }} . 
+
+<issue_description>
+{{ instance.problem_statement }}
+</issue_description>
+
+**CRITICAL GOAL: VULNERABILITY DISCOVERY & ROOT CAUSE ANALYSIS**
+Your primary mission is NOT to fix the issue, but to use the `fuzz_hypo_v2` tool to:
+1. Find the exact input that triggers the failure described in the <issue_description>.
+2. Identify the **ROOT CAUSE** of the failure (not just the symptom) using the tool's `analyze` mode.
+3. Discover at least 2 additional edge cases or related bugs in the same module.
+
+**TOOL GUIDELINES (fuzz_hypo_v2):**
+- **Automated Spec**: You can omit the `spec` parameter to let the tool auto-generate test properties from code analysis.
+- **Root Cause Analysis**: If a bug is found, pay close attention to the `is_root_cause` and `upstream_candidates` fields in the output.
+- **Minimal Inputs**: Use the "Minimal failing input" provided by the tool's shrinking process to understand the bug clearly.
+- **Iterative Fuzzing**: Use `mode="iterative"` if the bug seems to span multiple functions.
+
+**PHASES OF OPERATION:**
+
+Phase 1. REPO EXPLORATION
+   - Identify the core logic mentioned in the issue.
+   - Map out the call chain: which functions call the problematic logic?
+
+Phase 2. INITIAL FUZZING (The Symptom)
+   - Use `fuzz_hypo_v2` on the function where the error is reported.
+   - Use `mode="quick"` first. If it passes, try `mode="deep"`.
+
+Phase 3. ROOT CAUSE TRACING
+   - Once a failure is found, call `fuzz_hypo_v2` with `mode="analyze"` on that function.
+   - If the tool says `is_root_cause: False`, move your testing UPSTREAM to the suggested `upstream_candidates`.
+   - Repeat until you find the function where `is_root_cause: True`.
+
+Phase 4. BOUNDARY EXPLORATION
+   - For the identified root cause function, try to find the "minimal possible" failing input.
+   - Document how the logic breaks for this specific minimal case.
+
+Phase 5. FINAL ERROR REPORT
+   - List all functions tested.
+   - For each failure, provide the minimal input and the confirmed root cause location.
+   - **DO NOT SUBMIT A FIX.** Your final response should be a comprehensive bug report.
+
+Remember: A successful session is one where you provide a detailed map of the bug's origin and its minimal triggers using `fuzz_hypo_v2`.

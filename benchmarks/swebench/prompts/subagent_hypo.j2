@@ -13,10 +13,9 @@ Follow these phases to resolve the issue:
 
 Phase 1. READING: read the problem and reword it in clearer terms
    1.1 If there are code or config snippets. Express in words any best practices or conventions in them.
-   1.2 Hightlight message errors, method names, variables, file names, stack traces, and technical details.
+   1.2 Highlight message errors, method names, variables, file names, stack traces, and technical details.
    1.3 Explain the problem in clear terms.
    1.4 Enumerate the steps to reproduce the problem.
-   1.5 Hightlight any best practices to take into account when testing and fixing the issue
 
 Phase 2. RUNNING: install and run the tests on the repository
    2.1 Activate the environment by running  
@@ -28,36 +27,31 @@ Phase 2. RUNNING: install and run the tests on the repository
 Phase 3. EXPLORATION: find the files that are related to the problem and possible solutions
    3.1 Use `grep` to search for relevant methods, classes, keywords and error messages.
    3.2 Identify all files related to the problem statement.
-   3.3 Propose the methods and files to fix the issue and explain why.
-   3.4 From the possible file locations, select the most likely location to fix the issue.
 
-Phase 4. TEST CREATION: before implementing any fix, create a script to reproduce and verify the issue.
-   4.1 Look at existing test files in the repository to understand the test format/structure.
-   4.2 Create a minimal reproduction script that reproduces the located issue.
-   4.3 Run the reproduction script to confirm you are reproducing the issue.
-   4.4 Adjust the reproduction script as necessary.
+Phase 4. ADVANCED TEST CREATION (SUB-AGENT DELEGATION): 
+   For complex logic, edge cases, or regression testing, you MUST delegate testing to a specialist sub-agent.
+   4.1 **Spawn a Testing Expert**: Use `DelegateTool` to spawn a sub-agent named "pbt_expert" with type "test_expert" (if available) or a general agent.
+   4.2 **Delegate PBT Task**: Task the sub-agent to:
+       - Analyze the target function in {{ instance.repo_path }}.
+       - Implement a Property-Based Testing (PBT) script using the `hypothesis` library.
+       - Focus on patterns like: Roundtrip (encode/decode), Idempotence (normalize), or Invariants.
+       - The sub-agent must verify the script by running it against the current (broken) code.
+   4.3 **Receive Report**: Wait for the sub-agent to return a comprehensive failure report, including the exact inputs that trigger the bug.
+   4.4 **Deduplication**: Use the sub-agent's findings to confirm the root cause.
 
 Phase 5. FIX ANALYSIS: state clearly the problem and how to fix it
-   5.1 State clearly what the problem is.
+   5.1 State clearly what the problem is and how the sub-agent's test results confirm it.
    5.2 State clearly where the problem is located.
-   5.3 State clearly how the test reproduces the issue.
-   5.4 State clearly the best practices to take into account in the fix.
-   5.5 State clearly how to fix the problem.
+   5.3 State clearly the best practices to take into account in the fix.
 
 Phase 6. FIX IMPLEMENTATION: Edit the source code to implement your chosen solution.
    6.1 Make minimal, focused changes to fix the issue.
 
-Phase 7. VERIFICATION: Test your implementation thoroughly.
-   7.1 Run your reproduction script to verify the fix works.
-   7.2 Add edge cases to your test script to ensure comprehensive coverage.
-   7.3 Run existing tests related to the modified code to ensure you haven't broken anything.
+Phase 7. VERIFICATION & RE-TESTING:
+   7.1 **Verify with Sub-agent**: Delegate a follow-up task to the "pbt_expert" sub-agent to run the PBT script again on the fixed code.
+   7.2 **Ensure 100% Pass**: The sub-agent must confirm that all previous failing inputs now pass and no new edge cases are found (tested with at least 500 examples).
+   7.3 Run existing repository tests to ensure no regressions.
 
-8. FINAL REVIEW: Carefully re-read the problem description and compare your changes with the base commit {{ instance.base_commit }}.
-   8.1 Ensure you've fully addressed all requirements.
-   8.2 Run any tests in the repository related to:
-     8.2.1 The issue you are fixing
-     8.2.2 The files you modified
-     8.2.3 The functions you changed
-   8.3 If any tests fail, revise your implementation until all tests pass
+8. FINAL REVIEW: Carefully re-read the problem description and ensure all requirements are met.
 
-Be thorough in your exploration, testing, and reasoning. It's fine if your thinking process is lengthy - quality and completeness are more important than brevity.
+Be thorough. Utilize the power of parallel sub-agents to ensure the fix is robust against all possible edge cases.

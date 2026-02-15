@@ -1,0 +1,3092 @@
+{
+  "summary": [
+    {
+      "name": "baseline",
+      "total": 100,
+      "used": 0,
+      "calls": 0,
+      "success_calls": 0,
+      "bug_found": 0,
+      "error_calls": 0,
+      "file_errors": 0,
+      "path_bugs": 0,
+      "generated_tests": 0,
+      "resolved": 49,
+      "used_resolved": 0,
+      "completed": 74,
+      "empty_patch": 0,
+      "error_instances": 26
+    },
+    {
+      "name": "hypo",
+      "total": 100,
+      "used": 45,
+      "calls": 45,
+      "success_calls": 0,
+      "bug_found": 0,
+      "error_calls": 0,
+      "file_errors": 0,
+      "path_bugs": 0,
+      "generated_tests": 0,
+      "resolved": 58,
+      "used_resolved": 28,
+      "completed": 96,
+      "empty_patch": 4,
+      "error_instances": 0
+    },
+    {
+      "name": "fixed",
+      "total": 100,
+      "used": 57,
+      "calls": 57,
+      "success_calls": 0,
+      "bug_found": 48,
+      "error_calls": 0,
+      "file_errors": 25,
+      "path_bugs": 22,
+      "generated_tests": 0,
+      "resolved": 59,
+      "used_resolved": 36,
+      "completed": 99,
+      "empty_patch": 1,
+      "error_instances": 0
+    }
+  ],
+  "improvements": {
+    "vs_hypo": {
+      "completed": 3,
+      "resolved": 1,
+      "empty_patch_reduced": 3,
+      "file_errors_reduced": -25,
+      "path_bugs_reduced": -22
+    },
+    "vs_baseline": {
+      "completed": 25,
+      "resolved": 10,
+      "error_instances_eliminated": 26
+    }
+  },
+  "newly_fixed_from_hypo": [
+    "sphinx-doc__sphinx-10466"
+  ],
+  "newly_fixed_from_baseline": [
+    "sphinx-doc__sphinx-9698",
+    "sympy__sympy-15809",
+    "sympy__sympy-13372",
+    "sympy__sympy-23824",
+    "sympy__sympy-12481",
+    "sympy__sympy-24661",
+    "sympy__sympy-16450",
+    "sympy__sympy-13878",
+    "sympy__sympy-19637",
+    "sympy__sympy-22714"
+  ],
+  "detailed": {
+    "fixed": {
+      "pydata__xarray-4629": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-11510": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "django__django-9296": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-16631": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-13878": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15851": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-12481": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-11603": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14017": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13363": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "django__django-14915": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-13977": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-16766": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-8459": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-7590": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "astropy__astropy-7336": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15252": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-8621": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "django__django-12155": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "django__django-15022": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14539": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-16450": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pylint-dev__pylint-4970": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15863": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-11445": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "django__django-16493": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-22714": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13012": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-11477": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "matplotlib__matplotlib-20676": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-7454": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-19637": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "django__django-11999": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14672": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-14976": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "astropy__astropy-8707": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-10435": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-10323": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-10999": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15375": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-13212": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "matplotlib__matplotlib-22871": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-21596": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14631": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15280": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-13794": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14404": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "scikit-learn__scikit-learn-14141": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-12489": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "astropy__astropy-14539": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14311": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-12304": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-11333": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "django__django-13315": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15732": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-8638": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "scikit-learn__scikit-learn-9288": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15380": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-10554": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-24661": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pydata__xarray-6992": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pylint-dev__pylint-6528": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-16597": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-16560": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "psf__requests-1921": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "matplotlib__matplotlib-13989": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-10466": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-13496": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-9698": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-10673": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "sympy__sympy-23824": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-16139": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pytest-dev__pytest-10081": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8056": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-24213": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pytest-dev__pytest-5262": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pytest-dev__pytest-10051": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "matplotlib__matplotlib-20826": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-19783": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "django__django-15128": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-13974": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "scikit-learn__scikit-learn-26323": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14725": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pydata__xarray-4094": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "astropy__astropy-14096": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15554": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "astropy__astropy-14508": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-15976": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": false
+      },
+      "django__django-14122": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "sympy__sympy-15809": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "django__django-13837": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-16792": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-13821": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-7985": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-13372": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-12973": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-7440": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-12308": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pydata__xarray-2905": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 1,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 1,
+        "fuzz_path_bug_count": 1,
+        "resolved": true
+      },
+      "sympy__sympy-19040": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      }
+    },
+    "hypo": {
+      "django__django-9296": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pydata__xarray-4629": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15851": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-11510": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-13878": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14017": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-12481": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-16631": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-11603": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15252": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "astropy__astropy-13977": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-7590": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14915": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-16766": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-13363": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-7336": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8459": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-12155": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8621": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-16450": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15022": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14539": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pylint-dev__pylint-4970": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15863": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13012": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-16493": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-22714": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-11445": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "matplotlib__matplotlib-20676": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-11477": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-7454": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-11999": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14672": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-8707": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-14976": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-19637": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-10435": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-10323": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13212": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15375": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-10999": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "matplotlib__matplotlib-22871": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-21596": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-13794": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14631": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-12489": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15280": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14404": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "scikit-learn__scikit-learn-14141": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-12304": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-14539": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14311": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15732": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-13315": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-11333": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8638": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15380": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-9288": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-10554": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-16597": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pydata__xarray-6992": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-24661": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-10466": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pylint-dev__pylint-6528": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "psf__requests-1921": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-16560": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-13496": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-10673": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-23824": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-16139": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "matplotlib__matplotlib-13989": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "matplotlib__matplotlib-20826": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-9698": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-24213": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pytest-dev__pytest-10081": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-19783": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pytest-dev__pytest-5262": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8056": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pytest-dev__pytest-10051": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-26323": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-13974": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14725": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15128": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "astropy__astropy-14096": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-14508": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pydata__xarray-4094": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13837": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15554": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-15976": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-15809": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14122": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-7985": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-13372": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-12973": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13821": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-16792": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-7440": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-12308": {
+        "test_result": "unknown",
+        "fuzz_count": 1,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pydata__xarray-2905": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-19040": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      }
+    },
+    "baseline": {
+      "pydata__xarray-4629": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-9296": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15851": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-11510": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-13878": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-16631": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-11603": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-12481": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14017": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-13977": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-13363": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14915": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-7336": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-16766": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-7590": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15252": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-12155": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pylint-dev__pylint-4970": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8459": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15022": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8621": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-16450": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-16493": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14539": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15863": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13012": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-22714": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-11445": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-11477": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-7454": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-14976": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14672": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-11999": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-19637": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "matplotlib__matplotlib-20676": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-8707": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-10435": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-10323": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13212": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15375": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-10999": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "matplotlib__matplotlib-22871": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15280": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-21596": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14631": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-14141": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14404": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-12489": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-12304": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13794": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14311": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-14539": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-11333": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13315": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-15732": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-8638": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "scikit-learn__scikit-learn-9288": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-10554": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15380": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-16597": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-24661": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pydata__xarray-6992": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pylint-dev__pylint-6528": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-10466": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "psf__requests-1921": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "matplotlib__matplotlib-13989": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-16560": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "scikit-learn__scikit-learn-13496": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-10673": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-23824": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pytest-dev__pytest-10081": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-9698": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-24213": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-16139": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "pytest-dev__pytest-10051": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-8056": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "matplotlib__matplotlib-20826": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-19783": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pytest-dev__pytest-5262": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-13974": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15128": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "scikit-learn__scikit-learn-26323": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-14725": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-15554": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pydata__xarray-4094": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-14096": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "astropy__astropy-14508": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13837": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-15976": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-16792": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "django__django-14122": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sphinx-doc__sphinx-7985": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-15809": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sympy__sympy-13372": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "scikit-learn__scikit-learn-12973": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-13821": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "django__django-12308": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "sphinx-doc__sphinx-7440": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      },
+      "sympy__sympy-19040": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": false
+      },
+      "pydata__xarray-2905": {
+        "test_result": "unknown",
+        "fuzz_count": 0,
+        "fuzz_success_count": 0,
+        "fuzz_bug_found_count": 0,
+        "fuzz_error_count": 0,
+        "fuzz_file_error_count": 0,
+        "fuzz_path_bug_count": 0,
+        "resolved": true
+      }
+    }
+  }
+}

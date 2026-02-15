@@ -20,10 +20,14 @@ Phase 1. READING: read the problem and reword it in clearer terms
 
 Phase 2. RUNNING: install and run the tests on the repository
    2.1 Activate the environment by running  
-       ./opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed
-   2.2 Follow the readme
-   2.3 Install the environment and anything needed
-   2.4 Iterate and figure out how to run the tests
+       source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed
+   2.2 Install the package in development mode to ensure your changes are reflected:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This is CRITICAL: Python imports use the installed package, not the source files directly.
+       Without this step, your code changes will NOT be visible when running tests or importing the module.
+   2.3 Follow the readme
+   2.4 Install the environment and anything needed
+   2.5 Iterate and figure out how to run the tests
 
 Phase 3. EXPLORATION: find the files that are related to the problem and possible solutions
    3.1 Use `grep` to search for relevant methods, classes, keywords and error messages.
@@ -37,6 +41,13 @@ Phase 4. TEST CREATION: before implementing any fix, create a script to reproduc
    4.3 Run the reproduction script to confirm you are reproducing the issue.
    4.4 Adjust the reproduction script as necessary.
 
+Phase 4.5 PROPERTY-BASED TESTING (OPTIONAL): Use the `fuzz_hypo_v2` tool to find hidden edge cases.
+   4.5.1 If the issue involves complex logic or data transformations, use `fuzz_hypo_v2`.
+   4.5.2 Create a wrapper function in a test file to isolate the target logic with simple parameter types.
+   4.5.3 Define "properties" (invariants) that should always be true.
+   4.5.4 Use `fuzz_hypo_v2` with `mode="analyze"` if you suspect the bug originates upstream in the call chain.
+   4.5.5 Review the "Minimal failing input" (achieved via shrinking) to pinpoint the exact failure condition.
+
 Phase 5. FIX ANALYSIS: state clearly the problem and how to fix it
    5.1 State clearly what the problem is.
    5.2 State clearly where the problem is located.
@@ -46,10 +57,15 @@ Phase 5. FIX ANALYSIS: state clearly the problem and how to fix it
 
 Phase 6. FIX IMPLEMENTATION: Edit the source code to implement your chosen solution.
    6.1 Make minimal, focused changes to fix the issue.
+   6.2 IMPORTANT: After making code changes, reinstall the package to apply your modifications:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This ensures Python imports your modified code instead of the old cached version.
 
 Phase 7. VERIFICATION: Test your implementation thoroughly.
    7.1 Run your reproduction script to verify the fix works.
-   7.2 Add edge cases to your test script to ensure comprehensive coverage.
+   7.2 Use `fuzz_hypo_v2` to verify robustness:
+       7.2.1 Run the previously failing fuzzing task to ensure it now passes.
+       7.2.2 Use `mode="deep"` to ensure no new regressions were introduced.
    7.3 Run existing tests related to the modified code to ensure you haven't broken anything.
 
 8. FINAL REVIEW: Carefully re-read the problem description and compare your changes with the base commit {{ instance.base_commit }}.

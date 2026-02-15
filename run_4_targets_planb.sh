@@ -10,7 +10,7 @@ set -e  # Exit on error
 
 # Default values
 INSTANCES_FILE="instance_set/instances_target_4.txt"
-LLM_CONFIG=".llm_config/openrouter.json"
+LLM_CONFIG=".llm_config/openrouter_opus.json"
 DATASET_NAME="princeton-nlp/SWE-bench_Verified"
 SPLIT="test"
 NUM_WORKERS=4
@@ -107,9 +107,11 @@ SDK_SHA=$(git submodule status vendor/software-agent-sdk | awk '{print $1}' | se
 SDK_SHORT_SHA="${SDK_SHA:0:7}"
 
 # Build output path components
-DATASET_SANITIZED=${DATASET_NAME//\\//__}
+DATASET_SANITIZED=${DATASET_NAME//\//__}
 DATASET_PATH="${DATASET_SANITIZED}-${SPLIT}"
-MODEL_PATH_SUFFIX="${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial"
+# Extract model provider and name (e.g., openrouter/anthropic/claude-sonnet-4)
+MODEL_SANITIZED=${MODEL//\//__}
+MODEL_PATH_SUFFIX="${MODEL_SANITIZED}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial"
 
 # Extract subdirectory name from instances file
 INSTANCES_SUBDIR=$(basename "$INSTANCES_FILE" .txt)

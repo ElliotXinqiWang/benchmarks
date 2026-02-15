@@ -1,0 +1,35 @@
+{# benchmarks/swebench/prompts/verify_patch_blind.j2 #}
+You are a senior software engineer. Your task is to evaluate whether the provided patch correctly fixes the given issue.
+
+**CRITICAL RESTRICTION: You are NOT allowed to view or run any existing test suites in the repository (e.g., contents under the `tests/` or `testing/` directories). You must verify the fix through your own analysis and by generating new tests.**
+
+[Environment Setup]
+You are currently in a configured Docker environment. The codebase is located at `{{ instance.repo_path }}`.
+You can use terminal tools to run commands.
+
+[Problem Statement]
+{{ instance.problem_statement }}
+
+[Patch to Verify]
+```patch
+{{ instance.custom_patch }}
+```
+
+[Your Verification Tasks]
+1. **Analyze the Patch**: Before applying the patch, read the affected files to understand the logic of the fix and the edge cases it aims to address.
+2. **Apply the Patch**: Save the patch content above to a file and execute `git apply`.
+3. **Independent Verification**:
+   - **Write Tests**: Based on the problem statement, write your own test scripts (you can use `unittest`, `pytest`, etc.).
+   - **Anomalous Case Mining**: You are strongly encouraged to use Property-Based Testing (PBT, e.g., using `Hypothesis`) or Fuzzing methods to try and trigger potential errors or side effects.
+   - **Comparative Experiment**: You may try running your custom tests both before and after applying the patch to observe the change in behavior.
+4. **Analyze Results**:
+   - Describe what your tests captured.
+   - Even if your tests pass, consider if the patch might fail in other uncovered scenarios.
+
+5. **Final Verdict**:
+   **You MUST provide your final conclusion on the very last line of your response, strictly following this format:**
+   [VERDICT]: FIXED
+   OR
+   [VERDICT]: FAILED
+
+Please begin your verification process.

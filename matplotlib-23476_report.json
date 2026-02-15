@@ -1,0 +1,347 @@
+{
+  "generated_at": "2026-01-23T15:59:08.709684",
+  "instances": {
+    "matplotlib__matplotlib-23476": {
+      "path": "eval_outputs_fuzz_hypo_100/instances_100_4",
+      "models": {
+        "claude-sonnet-4_sdk_73769d5_maxiter_200_N_initial": {
+          "resolved": false,
+          "patch": "diff --git a/lib/matplotlib/backend_bases.py b/lib/matplotlib/backend_bases.py\nindex 9ae2982c62..b10d06eed0 100644\n--- a/lib/matplotlib/backend_bases.py\n+++ b/lib/matplotlib/backend_bases.py\n@@ -1653,7 +1653,9 @@ class FigureCanvasBase:\n         self.toolbar = None  # NavigationToolbar2 will set me\n         self._is_idle_drawing = False\n         # We don't want to scale up the figure DPI more than once.\n-        figure._original_dpi = figure.dpi\n+        # Only set _original_dpi if it's not already set (e.g., during unpickling)\n+        if not hasattr(figure, '_original_dpi'):\n+            figure._original_dpi = figure.dpi\n         self._device_pixel_ratio = 1\n         super().__init__()  # Typically the GUI widget init (if any).\n \ndiff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py\nindex c55864243a..222a4f0570 100644\n--- a/lib/matplotlib/figure.py\n+++ b/lib/matplotlib/figure.py\n@@ -3026,6 +3026,10 @@ class Figure(FigureBase):\n         # add version information to the state\n         state['__mpl_version__'] = mpl.__version__\n \n+        # Save the original logical DPI to prevent DPI doubling on unpickling\n+        # when device pixel ratio scaling is applied (e.g., on M1 Macs)\n+        state['_original_dpi'] = getattr(self, '_original_dpi', self._dpi)\n+\n         # check whether the figure manager (if any) is registered with pyplot\n         from matplotlib import _pylab_helpers\n         if self.canvas.manager in _pylab_helpers.Gcf.figs.values():\n@@ -3035,6 +3039,8 @@ class Figure(FigureBase):\n     def __setstate__(self, state):\n         version = state.pop('__mpl_version__')\n         restore_to_pylab = state.pop('_restore_to_pylab', False)\n+        # Extract the original logical DPI before restoring state\n+        saved_original_dpi = state.pop('_original_dpi', None)\n \n         if version != mpl.__version__:\n             _api.warn_external(\n@@ -3046,6 +3052,12 @@ class Figure(FigureBase):\n         # re-initialise some of the unstored state information\n         FigureCanvasBase(self)  # Set self.canvas.\n \n+        # Restore the original logical DPI to prevent DPI doubling\n+        # when device pixel ratio scaling is applied (e.g., on M1 Macs)\n+        # This must be done after FigureCanvasBase() which overwrites _original_dpi\n+        if saved_original_dpi is not None:\n+            self._original_dpi = saved_original_dpi\n+\n         if restore_to_pylab:\n             # lazy import to avoid circularity\n             import matplotlib.pyplot as plt\ndiff --git a/reproduce_issue.py b/reproduce_issue.py\nnew file mode 100644\nindex 0000000000..99832fc65b\n--- /dev/null\n+++ b/reproduce_issue.py\n@@ -0,0 +1,76 @@\n+#!/usr/bin/env python3\n+\"\"\"\n+Reproduction script for the DPI doubling issue after unpickling on M1 Mac.\n+\"\"\"\n+import numpy as np\n+import matplotlib\n+import matplotlib.pyplot as plt\n+import pickle\n+import platform\n+import os\n+\n+print('Matplotlib ver:', matplotlib.__version__)\n+print('Backend:', matplotlib.get_backend())\n+print('Platform:', platform.platform())\n+print('System:', platform.system())\n+print('Release:', platform.release())\n+print('Python ver:', platform.python_version())\n+\n+def dump_load_get_dpi(fig):\n+    \"\"\"Pickle and unpickle a figure, returning the new figure and its DPI.\"\"\"\n+    with open('test_figure.pickle','wb') as file:\n+        pickle.dump(fig, file)\n+\n+    with open('test_figure.pickle', 'rb') as blob:\n+        fig2 = pickle.load(blob)\n+    return fig2, fig2.dpi\n+\n+def test_dpi_doubling():\n+    \"\"\"Test that DPI doesn't double after pickle/unpickle cycles.\"\"\"\n+    # Force MacOSX backend if available to reproduce the issue\n+    try:\n+        matplotlib.use('MacOSX')\n+        print(f\"Using backend: {matplotlib.get_backend()}\")\n+    except ImportError:\n+        print(f\"MacOSX backend not available, using: {matplotlib.get_backend()}\")\n+    \n+    fig = plt.figure()\n+    x = np.linspace(0, 2*np.pi)\n+    y = np.sin(x)\n+    plt.plot(x, y)\n+    \n+    original_dpi = fig.dpi\n+    print(f'Original DPI: {original_dpi}')\n+    \n+    # Test multiple pickle/unpickle cycles\n+    for i in range(5):\n+        print(f'Iteration {i}: DPI = {fig.dpi}')\n+        \n+        # Check if DPI has doubled unexpectedly\n+        if i > 0 and fig.dpi != original_dpi:\n+            print(f\"ERROR: DPI changed from {original_dpi} to {fig.dpi} after {i} iterations\")\n+            return False\n+            \n+        try:\n+            fig, dpi = dump_load_get_dpi(fig)\n+        except OverflowError as e:\n+            print(f\"OverflowError after {i} iterations: {e}\")\n+            return False\n+    \n+    print(f'Final DPI: {fig.dpi}')\n+    \n+    # Clean up\n+    if os.path.exists('test_figure.pickle'):\n+        os.remove('test_figure.pickle')\n+    \n+    # Check if DPI remained constant\n+    if fig.dpi == original_dpi:\n+        print(\"SUCCESS: DPI remained constant\")\n+        return True\n+    else:\n+        print(f\"FAILURE: DPI changed from {original_dpi} to {fig.dpi}\")\n+        return False\n+\n+if __name__ == '__main__':\n+    success = test_dpi_doubling()\n+    exit(0 if success else 1)\n\\ No newline at end of file\ndiff --git a/test_comprehensive_fix.py b/test_comprehensive_fix.py\nnew file mode 100644\nindex 0000000000..e411309aa8\n--- /dev/null\n+++ b/test_comprehensive_fix.py\n@@ -0,0 +1,212 @@\n+#!/usr/bin/env python3\n+\"\"\"\n+Comprehensive test to verify the DPI doubling fix works correctly\n+and doesn't break existing functionality.\n+\"\"\"\n+import matplotlib\n+import matplotlib.pyplot as plt\n+import pickle\n+import tempfile\n+import os\n+\n+def test_normal_figure_creation():\n+    \"\"\"Test that normal figure creation still works.\"\"\"\n+    print(\"Testing normal figure creation...\")\n+    \n+    # Test with default DPI\n+    fig1 = plt.figure()\n+    assert hasattr(fig1, '_original_dpi'), \"_original_dpi should be set\"\n+    assert fig1._original_dpi == fig1.dpi, \"_original_dpi should equal current DPI\"\n+    print(f\"Default DPI figure: DPI={fig1.dpi}, _original_dpi={fig1._original_dpi}\")\n+    \n+    # Test with custom DPI\n+    fig2 = plt.figure(dpi=150)\n+    assert fig2._original_dpi == 150.0, \"_original_dpi should be 150.0\"\n+    assert fig2.dpi == 150.0, \"DPI should be 150.0\"\n+    print(f\"Custom DPI figure: DPI={fig2.dpi}, _original_dpi={fig2._original_dpi}\")\n+    \n+    plt.close('all')\n+    print(\"✓ Normal figure creation works correctly\")\n+\n+def test_device_pixel_ratio_scaling():\n+    \"\"\"Test that device pixel ratio scaling works correctly.\"\"\"\n+    print(\"\\nTesting device pixel ratio scaling...\")\n+    \n+    fig = plt.figure(dpi=200)\n+    original_dpi = fig.dpi\n+    original_original_dpi = fig._original_dpi\n+    \n+    # Test device pixel ratio scaling\n+    if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+        changed = fig.canvas._set_device_pixel_ratio(2.0)\n+        assert changed, \"Device pixel ratio change should return True\"\n+        assert fig.dpi == 400.0, f\"DPI should be 400.0, got {fig.dpi}\"\n+        assert fig._original_dpi == 200.0, f\"_original_dpi should remain 200.0, got {fig._original_dpi}\"\n+        print(f\"After 2x scaling: DPI={fig.dpi}, _original_dpi={fig._original_dpi}\")\n+        \n+        # Test scaling back\n+        changed = fig.canvas._set_device_pixel_ratio(1.0)\n+        assert changed, \"Device pixel ratio change should return True\"\n+        assert fig.dpi == 200.0, f\"DPI should be back to 200.0, got {fig.dpi}\"\n+        assert fig._original_dpi == 200.0, f\"_original_dpi should remain 200.0, got {fig._original_dpi}\"\n+        print(f\"After 1x scaling: DPI={fig.dpi}, _original_dpi={fig._original_dpi}\")\n+    else:\n+        print(\"Device pixel ratio scaling not available (expected for non-MacOSX backends)\")\n+    \n+    plt.close('all')\n+    print(\"✓ Device pixel ratio scaling works correctly\")\n+\n+def test_pickle_unpickle_without_scaling():\n+    \"\"\"Test pickle/unpickle without device pixel ratio scaling.\"\"\"\n+    print(\"\\nTesting pickle/unpickle without scaling...\")\n+    \n+    fig = plt.figure(dpi=180)\n+    original_dpi = fig.dpi\n+    \n+    # Pickle and unpickle\n+    with tempfile.NamedTemporaryFile(delete=False) as f:\n+        pickle.dump(fig, f)\n+        temp_file = f.name\n+    \n+    try:\n+        with open(temp_file, 'rb') as f:\n+            fig2 = pickle.load(f)\n+        \n+        assert fig2.dpi == original_dpi, f\"DPI should be preserved: expected {original_dpi}, got {fig2.dpi}\"\n+        assert fig2._original_dpi == original_dpi, f\"_original_dpi should be preserved: expected {original_dpi}, got {fig2._original_dpi}\"\n+        print(f\"After pickle/unpickle: DPI={fig2.dpi}, _original_dpi={fig2._original_dpi}\")\n+        \n+    finally:\n+        os.unlink(temp_file)\n+    \n+    plt.close('all')\n+    print(\"✓ Pickle/unpickle without scaling works correctly\")\n+\n+def test_pickle_unpickle_with_scaling():\n+    \"\"\"Test pickle/unpickle with device pixel ratio scaling (the main fix).\"\"\"\n+    print(\"\\nTesting pickle/unpickle with scaling...\")\n+    \n+    fig = plt.figure(dpi=200)\n+    \n+    # Apply device pixel ratio scaling\n+    if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+        fig.canvas._set_device_pixel_ratio(2.0)\n+        scaled_dpi = fig.dpi  # Should be 400.0\n+        original_logical_dpi = fig._original_dpi  # Should be 200.0\n+        \n+        print(f\"Before pickle: DPI={scaled_dpi}, _original_dpi={original_logical_dpi}\")\n+        \n+        # Pickle and unpickle\n+        with tempfile.NamedTemporaryFile(delete=False) as f:\n+            pickle.dump(fig, f)\n+            temp_file = f.name\n+        \n+        try:\n+            with open(temp_file, 'rb') as f:\n+                fig2 = pickle.load(f)\n+            \n+            print(f\"After unpickle: DPI={fig2.dpi}, _original_dpi={fig2._original_dpi}\")\n+            \n+            # The key test: _original_dpi should be preserved\n+            assert fig2._original_dpi == 200.0, f\"_original_dpi should be 200.0, got {fig2._original_dpi}\"\n+            \n+            # Apply device pixel ratio scaling again (this is what happens on MacOSX)\n+            fig2.canvas._set_device_pixel_ratio(2.0)\n+            \n+            # DPI should be correct (not doubled)\n+            assert fig2.dpi == 400.0, f\"DPI should be 400.0 (not 800.0), got {fig2.dpi}\"\n+            print(f\"After re-scaling: DPI={fig2.dpi}, _original_dpi={fig2._original_dpi}\")\n+            \n+        finally:\n+            os.unlink(temp_file)\n+    else:\n+        print(\"Device pixel ratio scaling not available (expected for non-MacOSX backends)\")\n+    \n+    plt.close('all')\n+    print(\"✓ Pickle/unpickle with scaling works correctly\")\n+\n+def test_backward_compatibility():\n+    \"\"\"Test backward compatibility with figures pickled without _original_dpi.\"\"\"\n+    print(\"\\nTesting backward compatibility...\")\n+    \n+    # Create a figure and manually create an \"old\" state\n+    fig = plt.figure(dpi=160)\n+    state = fig.__getstate__()\n+    \n+    # Remove _original_dpi to simulate old pickled figure\n+    if '_original_dpi' in state:\n+        del state['_original_dpi']\n+    \n+    # Create new figure and restore old state\n+    fig2 = plt.figure()\n+    fig2.__setstate__(state)\n+    \n+    # Should work without errors\n+    assert hasattr(fig2, '_original_dpi'), \"_original_dpi should be set by canvas constructor\"\n+    assert fig2._original_dpi == fig2.dpi, \"_original_dpi should equal current DPI\"\n+    print(f\"Restored old figure: DPI={fig2.dpi}, _original_dpi={fig2._original_dpi}\")\n+    \n+    plt.close('all')\n+    print(\"✓ Backward compatibility works correctly\")\n+\n+def test_multiple_pickle_cycles():\n+    \"\"\"Test multiple pickle/unpickle cycles to ensure no accumulation.\"\"\"\n+    print(\"\\nTesting multiple pickle/unpickle cycles...\")\n+    \n+    fig = plt.figure(dpi=120)\n+    original_dpi = fig.dpi\n+    \n+    # Apply scaling if available\n+    if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+        fig.canvas._set_device_pixel_ratio(1.5)\n+        expected_dpi = 180.0  # 120 * 1.5\n+    else:\n+        expected_dpi = original_dpi\n+    \n+    # Multiple pickle/unpickle cycles\n+    for i in range(3):\n+        with tempfile.NamedTemporaryFile(delete=False) as f:\n+            pickle.dump(fig, f)\n+            temp_file = f.name\n+        \n+        try:\n+            with open(temp_file, 'rb') as f:\n+                fig = pickle.load(f)\n+            \n+            # Apply scaling again\n+            if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+                fig.canvas._set_device_pixel_ratio(1.5)\n+            \n+            print(f\"Cycle {i+1}: DPI={fig.dpi}, _original_dpi={fig._original_dpi}\")\n+            \n+            # DPI should remain stable\n+            assert fig.dpi == expected_dpi, f\"DPI should be {expected_dpi}, got {fig.dpi}\"\n+            assert fig._original_dpi == original_dpi, f\"_original_dpi should be {original_dpi}, got {fig._original_dpi}\"\n+            \n+        finally:\n+            os.unlink(temp_file)\n+    \n+    plt.close('all')\n+    print(\"✓ Multiple pickle/unpickle cycles work correctly\")\n+\n+if __name__ == '__main__':\n+    print(f\"Matplotlib version: {matplotlib.__version__}\")\n+    print(f\"Backend: {matplotlib.get_backend()}\")\n+    print(\"=\"*60)\n+    \n+    try:\n+        test_normal_figure_creation()\n+        test_device_pixel_ratio_scaling()\n+        test_pickle_unpickle_without_scaling()\n+        test_pickle_unpickle_with_scaling()\n+        test_backward_compatibility()\n+        test_multiple_pickle_cycles()\n+        \n+        print(\"\\n\" + \"=\"*60)\n+        print(\"🎉 ALL TESTS PASSED! The fix works correctly.\")\n+        \n+    except Exception as e:\n+        print(f\"\\n❌ TEST FAILED: {e}\")\n+        import traceback\n+        traceback.print_exc()\n+        exit(1)\n\\ No newline at end of file\ndiff --git a/test_dpi_hypothesis.py b/test_dpi_hypothesis.py\nnew file mode 100644\nindex 0000000000..0eeddcc1c9\n--- /dev/null\n+++ b/test_dpi_hypothesis.py\n@@ -0,0 +1,122 @@\n+#!/usr/bin/env python3\n+\"\"\"\n+Test script to verify the DPI doubling hypothesis.\n+\"\"\"\n+import matplotlib\n+import matplotlib.pyplot as plt\n+import pickle\n+import tempfile\n+import os\n+\n+def test_original_dpi_issue():\n+    \"\"\"Test the _original_dpi issue during unpickling.\"\"\"\n+    print(\"Testing _original_dpi issue...\")\n+    \n+    # Create a figure with DPI 200\n+    fig = plt.figure(dpi=200.0)\n+    print(f\"Initial figure DPI: {fig.dpi}\")\n+    print(f\"Initial figure _original_dpi: {getattr(fig, '_original_dpi', 'Not set')}\")\n+    \n+    # Simulate what happens on M1 Mac: device pixel ratio is 2.0\n+    # This would normally be called by the MacOSX backend\n+    if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+        print(\"\\nSimulating device pixel ratio change to 2.0...\")\n+        changed = fig.canvas._set_device_pixel_ratio(2.0)\n+        print(f\"Device pixel ratio changed: {changed}\")\n+        print(f\"Figure DPI after device pixel ratio change: {fig.dpi}\")\n+        print(f\"Figure _original_dpi after device pixel ratio change: {getattr(fig, '_original_dpi', 'Not set')}\")\n+    \n+    # Now pickle and unpickle\n+    print(\"\\nPickling and unpickling...\")\n+    with tempfile.NamedTemporaryFile(delete=False) as f:\n+        pickle.dump(fig, f)\n+        temp_file = f.name\n+    \n+    try:\n+        with open(temp_file, 'rb') as f:\n+            fig2 = pickle.load(f)\n+        \n+        print(f\"Unpickled figure DPI: {fig2.dpi}\")\n+        print(f\"Unpickled figure _original_dpi: {getattr(fig2, '_original_dpi', 'Not set')}\")\n+        \n+        # Simulate device pixel ratio detection again (this is what happens on MacOSX)\n+        if hasattr(fig2.canvas, '_set_device_pixel_ratio'):\n+            print(\"\\nSimulating device pixel ratio detection again...\")\n+            changed = fig2.canvas._set_device_pixel_ratio(2.0)\n+            print(f\"Device pixel ratio changed: {changed}\")\n+            print(f\"Figure DPI after second device pixel ratio change: {fig2.dpi}\")\n+            print(f\"Expected DPI (should be 400.0): 400.0\")\n+            print(f\"Actual DPI: {fig2.dpi}\")\n+            \n+            if fig2.dpi == 800.0:\n+                print(\"ERROR: DPI doubled! This confirms the hypothesis.\")\n+                return False\n+            elif fig2.dpi == 400.0:\n+                print(\"SUCCESS: DPI is correct.\")\n+                return True\n+            else:\n+                print(f\"UNEXPECTED: DPI is {fig2.dpi}\")\n+                return False\n+    finally:\n+        os.unlink(temp_file)\n+\n+def test_fix_hypothesis():\n+    \"\"\"Test a potential fix by preserving the original DPI correctly.\"\"\"\n+    print(\"\\n\" + \"=\"*60)\n+    print(\"Testing potential fix...\")\n+    \n+    # Create a figure with DPI 200\n+    fig = plt.figure(dpi=200.0)\n+    original_logical_dpi = 200.0\n+    \n+    # Manually set _original_dpi to the logical DPI before any scaling\n+    fig._original_dpi = original_logical_dpi\n+    \n+    print(f\"Figure DPI: {fig.dpi}\")\n+    print(f\"Figure _original_dpi (manually set): {fig._original_dpi}\")\n+    \n+    # Simulate device pixel ratio change\n+    if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+        changed = fig.canvas._set_device_pixel_ratio(2.0)\n+        print(f\"Figure DPI after device pixel ratio change: {fig.dpi}\")\n+        print(f\"Figure _original_dpi after device pixel ratio change: {fig._original_dpi}\")\n+    \n+    # Pickle and unpickle\n+    with tempfile.NamedTemporaryFile(delete=False) as f:\n+        pickle.dump(fig, f)\n+        temp_file = f.name\n+    \n+    try:\n+        with open(temp_file, 'rb') as f:\n+            fig2 = pickle.load(f)\n+        \n+        print(f\"Unpickled figure DPI: {fig2.dpi}\")\n+        print(f\"Unpickled figure _original_dpi: {fig2._original_dpi}\")\n+        \n+        # The issue: canvas constructor overwrites _original_dpi with current DPI\n+        print(f\"Canvas constructor overwrote _original_dpi to: {fig2._original_dpi}\")\n+        \n+        # Simulate the fix: restore _original_dpi from saved state\n+        fig2._original_dpi = original_logical_dpi\n+        print(f\"Fixed _original_dpi to: {fig2._original_dpi}\")\n+        \n+        # Now simulate device pixel ratio detection\n+        if hasattr(fig2.canvas, '_set_device_pixel_ratio'):\n+            changed = fig2.canvas._set_device_pixel_ratio(2.0)\n+            print(f\"Figure DPI after device pixel ratio change with fix: {fig2.dpi}\")\n+            \n+            if fig2.dpi == 400.0:\n+                print(\"SUCCESS: Fix works! DPI is correct.\")\n+                return True\n+            else:\n+                print(f\"FAILURE: DPI is {fig2.dpi}, expected 400.0\")\n+                return False\n+    finally:\n+        os.unlink(temp_file)\n+\n+if __name__ == '__main__':\n+    print(f\"Matplotlib version: {matplotlib.__version__}\")\n+    print(f\"Backend: {matplotlib.get_backend()}\")\n+    \n+    test_original_dpi_issue()\n+    test_fix_hypothesis()\n\\ No newline at end of file\ndiff --git a/test_fix_verification.py b/test_fix_verification.py\nnew file mode 100644\nindex 0000000000..cae252ab11\n--- /dev/null\n+++ b/test_fix_verification.py\n@@ -0,0 +1,109 @@\n+#!/usr/bin/env python3\n+\"\"\"\n+Test script to verify the DPI doubling fix.\n+\"\"\"\n+import matplotlib\n+import matplotlib.pyplot as plt\n+import pickle\n+import tempfile\n+import os\n+\n+def test_fix():\n+    \"\"\"Test that the fix prevents DPI doubling.\"\"\"\n+    print(\"Testing DPI doubling fix...\")\n+    \n+    # Create a figure with DPI 200\n+    fig = plt.figure(dpi=200.0)\n+    print(f\"Initial figure DPI: {fig.dpi}\")\n+    print(f\"Initial figure _original_dpi: {getattr(fig, '_original_dpi', 'Not set')}\")\n+    \n+    # Simulate device pixel ratio change (as would happen on M1 Mac)\n+    if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+        changed = fig.canvas._set_device_pixel_ratio(2.0)\n+        print(f\"Device pixel ratio changed: {changed}\")\n+        print(f\"Figure DPI after device pixel ratio change: {fig.dpi}\")\n+        print(f\"Figure _original_dpi after device pixel ratio change: {getattr(fig, '_original_dpi', 'Not set')}\")\n+    \n+    # Test the __getstate__ method to see what's saved\n+    state = fig.__getstate__()\n+    print(f\"Saved _original_dpi in state: {state.get('_original_dpi', 'Not found')}\")\n+    \n+    # Pickle and unpickle\n+    print(\"\\nPickling and unpickling...\")\n+    with tempfile.NamedTemporaryFile(delete=False) as f:\n+        pickle.dump(fig, f)\n+        temp_file = f.name\n+    \n+    try:\n+        with open(temp_file, 'rb') as f:\n+            fig2 = pickle.load(f)\n+        \n+        print(f\"Unpickled figure DPI: {fig2.dpi}\")\n+        print(f\"Unpickled figure _original_dpi: {getattr(fig2, '_original_dpi', 'Not set')}\")\n+        \n+        # Simulate device pixel ratio detection again\n+        if hasattr(fig2.canvas, '_set_device_pixel_ratio'):\n+            print(\"\\nSimulating device pixel ratio detection again...\")\n+            changed = fig2.canvas._set_device_pixel_ratio(2.0)\n+            print(f\"Device pixel ratio changed: {changed}\")\n+            print(f\"Figure DPI after second device pixel ratio change: {fig2.dpi}\")\n+            \n+            if fig2.dpi == 400.0:\n+                print(\"SUCCESS: Fix works! DPI is correct (400.0).\")\n+                return True\n+            elif fig2.dpi == 800.0:\n+                print(\"FAILURE: DPI doubled to 800.0. Fix didn't work.\")\n+                return False\n+            else:\n+                print(f\"UNEXPECTED: DPI is {fig2.dpi}\")\n+                return False\n+        else:\n+            print(\"Device pixel ratio method not available\")\n+            return True\n+    finally:\n+        os.unlink(temp_file)\n+\n+def test_backward_compatibility():\n+    \"\"\"Test that the fix doesn't break figures pickled with older versions.\"\"\"\n+    print(\"\\n\" + \"=\"*60)\n+    print(\"Testing backward compatibility...\")\n+    \n+    # Create a figure and manually create an \"old\" state without _original_dpi\n+    fig = plt.figure(dpi=200.0)\n+    state = fig.__getstate__()\n+    \n+    # Remove _original_dpi to simulate old pickled figure\n+    if '_original_dpi' in state:\n+        del state['_original_dpi']\n+        print(\"Removed _original_dpi from state to simulate old pickled figure\")\n+    \n+    # Create new figure and restore old state\n+    fig2 = plt.figure()\n+    fig2.__setstate__(state)\n+    \n+    print(f\"Figure DPI after restoring old state: {fig2.dpi}\")\n+    print(f\"Figure _original_dpi after restoring old state: {getattr(fig2, '_original_dpi', 'Not set')}\")\n+    \n+    # The _original_dpi should be set by the canvas constructor\n+    if hasattr(fig2, '_original_dpi'):\n+        print(\"SUCCESS: Backward compatibility maintained\")\n+        return True\n+    else:\n+        print(\"FAILURE: _original_dpi not set for old pickled figure\")\n+        return False\n+\n+if __name__ == '__main__':\n+    print(f\"Matplotlib version: {matplotlib.__version__}\")\n+    print(f\"Backend: {matplotlib.get_backend()}\")\n+    \n+    success1 = test_fix()\n+    success2 = test_backward_compatibility()\n+    \n+    if success1 and success2:\n+        print(\"\\n\" + \"=\"*60)\n+        print(\"ALL TESTS PASSED!\")\n+        exit(0)\n+    else:\n+        print(\"\\n\" + \"=\"*60)\n+        print(\"SOME TESTS FAILED!\")\n+        exit(1)\n\\ No newline at end of file\ndiff --git a/test_fuzz_wrapper.py b/test_fuzz_wrapper.py\nnew file mode 100644\nindex 0000000000..4afc93ea4c\n--- /dev/null\n+++ b/test_fuzz_wrapper.py\n@@ -0,0 +1,91 @@\n+#!/usr/bin/env python3\n+\"\"\"\n+Wrapper functions for fuzz testing DPI handling in matplotlib.\n+\"\"\"\n+import matplotlib.pyplot as plt\n+import pickle\n+import tempfile\n+import os\n+\n+def fuzz_dpi_preservation(initial_dpi: float, device_pixel_ratio: float):\n+    \"\"\"\n+    Wrapper to test DPI preservation during pickle/unpickle cycles.\n+    \n+    Parameters:\n+    - initial_dpi: Initial DPI value for the figure\n+    - device_pixel_ratio: Device pixel ratio to simulate\n+    \n+    Returns:\n+    - True if DPI is preserved correctly, False otherwise\n+    \"\"\"\n+    if initial_dpi <= 0 or not (0.5 <= device_pixel_ratio <= 4.0):\n+        return False\n+    \n+    try:\n+        # Create figure with specified DPI\n+        fig = plt.figure(dpi=initial_dpi)\n+        original_dpi = fig.dpi\n+        \n+        # Simulate device pixel ratio change (if supported)\n+        if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+            fig.canvas._set_device_pixel_ratio(device_pixel_ratio)\n+            expected_dpi = initial_dpi * device_pixel_ratio\n+        else:\n+            expected_dpi = initial_dpi\n+        \n+        # Pickle and unpickle\n+        with tempfile.NamedTemporaryFile(delete=False) as f:\n+            pickle.dump(fig, f)\n+            temp_file = f.name\n+        \n+        try:\n+            with open(temp_file, 'rb') as f:\n+                fig2 = pickle.load(f)\n+            \n+            # Simulate device pixel ratio detection again\n+            if hasattr(fig2.canvas, '_set_device_pixel_ratio'):\n+                fig2.canvas._set_device_pixel_ratio(device_pixel_ratio)\n+            \n+            # Check if DPI is correct (should be initial_dpi * device_pixel_ratio)\n+            final_dpi = fig2.dpi\n+            return abs(final_dpi - expected_dpi) < 1e-6\n+            \n+        finally:\n+            os.unlink(temp_file)\n+            \n+    except Exception:\n+        return False\n+\n+def fuzz_original_dpi_handling(dpi: float, ratio: float):\n+    \"\"\"\n+    Wrapper to test _original_dpi handling during canvas creation.\n+    \n+    Parameters:\n+    - dpi: DPI value for the figure\n+    - ratio: Device pixel ratio\n+    \n+    Returns:\n+    - True if _original_dpi is handled correctly, False otherwise\n+    \"\"\"\n+    if dpi <= 0 or not (0.5 <= ratio <= 4.0):\n+        return False\n+    \n+    try:\n+        # Create figure\n+        fig = plt.figure(dpi=dpi)\n+        \n+        # Check that _original_dpi is set correctly initially\n+        if not hasattr(fig, '_original_dpi') or fig._original_dpi != dpi:\n+            return False\n+        \n+        # Simulate device pixel ratio change\n+        if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+            fig.canvas._set_device_pixel_ratio(ratio)\n+            # _original_dpi should remain unchanged\n+            if fig._original_dpi != dpi:\n+                return False\n+        \n+        return True\n+        \n+    except Exception:\n+        return False\n\\ No newline at end of file\ndiff --git a/test_macosx_dpi.py b/test_macosx_dpi.py\nnew file mode 100644\nindex 0000000000..c2a913d408\n--- /dev/null\n+++ b/test_macosx_dpi.py\n@@ -0,0 +1,123 @@\n+#!/usr/bin/env python3\n+\"\"\"\n+Test script to understand the DPI doubling issue in MacOSX backend.\n+This script simulates the issue by examining the canvas initialization process.\n+\"\"\"\n+import numpy as np\n+import matplotlib\n+import matplotlib.pyplot as plt\n+import pickle\n+import tempfile\n+import os\n+\n+def test_figure_canvas_initialization():\n+    \"\"\"Test how figure canvas initialization affects DPI.\"\"\"\n+    print(\"Testing figure canvas initialization...\")\n+    \n+    # Create a figure with specific DPI\n+    fig = plt.figure(dpi=200.0)\n+    print(f\"Initial figure DPI: {fig.dpi}\")\n+    print(f\"Initial figure _original_dpi: {getattr(fig, '_original_dpi', 'Not set')}\")\n+    \n+    # Check canvas properties\n+    if hasattr(fig.canvas, '_device_pixel_ratio'):\n+        print(f\"Canvas device_pixel_ratio: {fig.canvas._device_pixel_ratio}\")\n+    if hasattr(fig.canvas, 'device_pixel_ratio'):\n+        print(f\"Canvas device_pixel_ratio (property): {fig.canvas.device_pixel_ratio}\")\n+    \n+    # Simulate what happens during unpickling\n+    print(\"\\nSimulating unpickling process...\")\n+    \n+    # Save the figure state\n+    state = fig.__getstate__()\n+    print(f\"Saved state DPI: {state.get('_dpi', 'Not found')}\")\n+    \n+    # Create a new figure and restore state\n+    fig2 = plt.figure()\n+    print(f\"New figure DPI before setstate: {fig2.dpi}\")\n+    \n+    # This is what happens during unpickling\n+    fig2.__setstate__(state)\n+    print(f\"New figure DPI after setstate: {fig2.dpi}\")\n+    print(f\"New figure _original_dpi after setstate: {getattr(fig2, '_original_dpi', 'Not set')}\")\n+    \n+    return fig2.dpi\n+\n+def test_pickle_unpickle_cycle():\n+    \"\"\"Test a complete pickle/unpickle cycle.\"\"\"\n+    print(\"\\n\" + \"=\"*50)\n+    print(\"Testing complete pickle/unpickle cycle...\")\n+    \n+    # Create figure with specific DPI\n+    fig = plt.figure(dpi=200.0)\n+    x = np.linspace(0, 2*np.pi)\n+    y = np.sin(x)\n+    plt.plot(x, y)\n+    \n+    print(f\"Original figure DPI: {fig.dpi}\")\n+    print(f\"Original figure _original_dpi: {getattr(fig, '_original_dpi', 'Not set')}\")\n+    \n+    # Pickle and unpickle\n+    with tempfile.NamedTemporaryFile(delete=False) as f:\n+        pickle.dump(fig, f)\n+        temp_file = f.name\n+    \n+    try:\n+        with open(temp_file, 'rb') as f:\n+            fig2 = pickle.load(f)\n+        \n+        print(f\"Unpickled figure DPI: {fig2.dpi}\")\n+        print(f\"Unpickled figure _original_dpi: {getattr(fig2, '_original_dpi', 'Not set')}\")\n+        \n+        # Check if DPI doubled\n+        if fig2.dpi == 2 * fig.dpi:\n+            print(\"ERROR: DPI doubled after unpickling!\")\n+            return False\n+        elif fig2.dpi == fig.dpi:\n+            print(\"SUCCESS: DPI preserved after unpickling\")\n+            return True\n+        else:\n+            print(f\"WARNING: DPI changed unexpectedly from {fig.dpi} to {fig2.dpi}\")\n+            return False\n+    finally:\n+        os.unlink(temp_file)\n+\n+def examine_canvas_creation():\n+    \"\"\"Examine what happens during canvas creation.\"\"\"\n+    print(\"\\n\" + \"=\"*50)\n+    print(\"Examining canvas creation process...\")\n+    \n+    # Create a figure\n+    fig = plt.figure(dpi=200.0)\n+    print(f\"Figure DPI: {fig.dpi}\")\n+    print(f\"Figure _original_dpi: {getattr(fig, '_original_dpi', 'Not set')}\")\n+    \n+    # Check canvas initialization\n+    canvas = fig.canvas\n+    print(f\"Canvas type: {type(canvas)}\")\n+    print(f\"Canvas device_pixel_ratio: {getattr(canvas, '_device_pixel_ratio', 'Not set')}\")\n+    \n+    # Check figure bbox\n+    print(f\"Figure bbox: {fig.bbox}\")\n+    print(f\"Figure bbox_inches: {fig.bbox_inches}\")\n+    print(f\"Figure dpi_scale_trans: {fig.dpi_scale_trans}\")\n+    \n+    # Check get_width_height\n+    width, height = canvas.get_width_height()\n+    print(f\"Canvas width, height: {width}, {height}\")\n+    \n+    # Check physical dimensions\n+    if hasattr(canvas, 'get_width_height'):\n+        try:\n+            phys_width, phys_height = canvas.get_width_height(physical=True)\n+            print(f\"Canvas physical width, height: {phys_width}, {phys_height}\")\n+        except TypeError:\n+            print(\"Canvas get_width_height doesn't support physical parameter\")\n+\n+if __name__ == '__main__':\n+    print(f\"Matplotlib version: {matplotlib.__version__}\")\n+    print(f\"Backend: {matplotlib.get_backend()}\")\n+    \n+    test_figure_canvas_initialization()\n+    test_pickle_unpickle_cycle()\n+    examine_canvas_creation()\n\\ No newline at end of file\ndiff --git a/test_original_issue.py b/test_original_issue.py\nnew file mode 100644\nindex 0000000000..54cabf7502\n--- /dev/null\n+++ b/test_original_issue.py\n@@ -0,0 +1,77 @@\n+#!/usr/bin/env python3\n+\"\"\"\n+Test script that reproduces the exact original issue from the bug report.\n+This simulates the MacOSX backend behavior on M1 Mac.\n+\"\"\"\n+import numpy as np\n+import matplotlib\n+import matplotlib.pyplot as plt\n+import pickle\n+import tempfile\n+import os\n+\n+def dump_load_get_dpi(fig):\n+    \"\"\"Pickle and unpickle a figure, returning the new figure and its DPI.\"\"\"\n+    with tempfile.NamedTemporaryFile(delete=False) as f:\n+        pickle.dump(fig, f)\n+        temp_file = f.name\n+\n+    try:\n+        with open(temp_file, 'rb') as f:\n+            fig2 = pickle.load(f)\n+        \n+        # Simulate MacOSX backend detecting device pixel ratio on M1 Mac\n+        if hasattr(fig2.canvas, '_set_device_pixel_ratio'):\n+            fig2.canvas._set_device_pixel_ratio(2.0)\n+        \n+        return fig2, fig2.dpi\n+    finally:\n+        os.unlink(temp_file)\n+\n+def run_original_test():\n+    \"\"\"Run the original test from the bug report.\"\"\"\n+    print('Matplotlib ver:', matplotlib.__version__)\n+    print('Backend:', matplotlib.get_backend())\n+    print('Testing DPI doubling fix...')\n+    \n+    fig = plt.figure(dpi=200.0)  # Start with 200 DPI like in the original issue\n+    x = np.linspace(0, 2*np.pi)\n+    y = np.sin(x)\n+    plt.plot(x, y)\n+    \n+    # Simulate MacOSX backend detecting device pixel ratio initially\n+    if hasattr(fig.canvas, '_set_device_pixel_ratio'):\n+        fig.canvas._set_device_pixel_ratio(2.0)\n+    \n+    expected_dpi = 400.0  # 200 * 2.0\n+    \n+    print(f'Initial DPI after device scaling: {fig.dpi}')\n+    \n+    # Test multiple iterations like in the original bug report\n+    for i in range(10):  # Reduced from 32 to avoid potential issues\n+        print(f'{i}: {fig.dpi}')\n+        \n+        # Check if DPI is as expected\n+        if fig.dpi != expected_dpi:\n+            print(f\"ERROR: DPI is {fig.dpi}, expected {expected_dpi}\")\n+            return False\n+        \n+        try:\n+            fig, dpi = dump_load_get_dpi(fig)\n+        except OverflowError as e:\n+            print(f\"OverflowError after {i} iterations: {e}\")\n+            return False\n+    \n+    print(f'Final DPI: {fig.dpi}')\n+    \n+    # Check if DPI remained constant (the fix)\n+    if fig.dpi == expected_dpi:\n+        print(\"SUCCESS: DPI remained constant - fix works!\")\n+        return True\n+    else:\n+        print(f\"FAILURE: DPI changed to {fig.dpi}, expected {expected_dpi}\")\n+        return False\n+\n+if __name__ == '__main__':\n+    success = run_original_test()\n+    exit(0 if success else 1)\n\\ No newline at end of file\n",
+          "tests_status": {
+            "FAIL_TO_PASS": {
+              "success": [],
+              "failure": [
+                "lib/matplotlib/tests/test_figure.py::test_unpickle_with_device_pixel_ratio"
+              ]
+            },
+            "PASS_TO_PASS": {
+              "success": [
+                "lib/matplotlib/tests/test_figure.py::test_align_labels[png]",
+                "lib/matplotlib/tests/test_figure.py::test_align_labels_stray_axes",
+                "lib/matplotlib/tests/test_figure.py::test_figure_label",
+                "lib/matplotlib/tests/test_figure.py::test_fignum_exists",
+                "lib/matplotlib/tests/test_figure.py::test_clf_keyword",
+                "lib/matplotlib/tests/test_figure.py::test_figure[png]",
+                "lib/matplotlib/tests/test_figure.py::test_figure[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_legend[png]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_legend[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_gca",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_subclass",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_invalid",
+                "lib/matplotlib/tests/test_figure.py::test_suptitle[png]",
+                "lib/matplotlib/tests/test_figure.py::test_suptitle[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_suptitle_fontproperties",
+                "lib/matplotlib/tests/test_figure.py::test_alpha[png]",
+                "lib/matplotlib/tests/test_figure.py::test_too_many_figures",
+                "lib/matplotlib/tests/test_figure.py::test_iterability_axes_argument",
+                "lib/matplotlib/tests/test_figure.py::test_set_fig_size",
+                "lib/matplotlib/tests/test_figure.py::test_axes_remove",
+                "lib/matplotlib/tests/test_figure.py::test_figaspect",
+                "lib/matplotlib/tests/test_figure.py::test_autofmt_xdate[both]",
+                "lib/matplotlib/tests/test_figure.py::test_autofmt_xdate[major]",
+                "lib/matplotlib/tests/test_figure.py::test_autofmt_xdate[minor]",
+                "lib/matplotlib/tests/test_figure.py::test_change_dpi",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_size[1-nan]",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_size[-1-1]",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_size[inf-1]",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_add_axes",
+                "lib/matplotlib/tests/test_figure.py::test_subplots_shareax_loglabels",
+                "lib/matplotlib/tests/test_figure.py::test_savefig",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_warns",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_backend",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_pixel_ratio[Agg]",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_pixel_ratio[Cairo]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_repr",
+                "lib/matplotlib/tests/test_figure.py::test_valid_layouts",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_layouts",
+                "lib/matplotlib/tests/test_figure.py::test_add_artist[png]",
+                "lib/matplotlib/tests/test_figure.py::test_add_artist[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[png]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[ps]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[eps]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[svg]",
+                "lib/matplotlib/tests/test_figure.py::test_tightbbox",
+                "lib/matplotlib/tests/test_figure.py::test_axes_removal",
+                "lib/matplotlib/tests/test_figure.py::test_removed_axis",
+                "lib/matplotlib/tests/test_figure.py::test_figure_clear[clear]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_clear[clf]",
+                "lib/matplotlib/tests/test_figure.py::test_clf_not_redefined",
+                "lib/matplotlib/tests/test_figure.py::test_picking_does_not_stale",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_twotuple",
+                "lib/matplotlib/tests/test_figure.py::test_animated_with_canvas_change[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_animated_with_canvas_change[eps]",
+                "lib/matplotlib/tests/test_figure.py::test_animated_with_canvas_change[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_basic[x0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_basic[x1-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_all_nested[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_nested[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_nested_tuple[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x0-None-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x1-SKIP-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x2-0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x3-None-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x4-SKIP-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x5-0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail_list_of_str",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_subplot_kw[subplot_kw0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_subplot_kw[subplot_kw1-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_subplot_kw[None-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_string_parser",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_single_str_input[AAA\\nBBB-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_single_str_input[\\nAAA\\nBBB\\n-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_single_str_input[ABC\\nDEF-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[x0-(?m)we",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[x1-There",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[AAA\\nc\\nBBB-All",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[x3-All",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_hashable_keys[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[abc]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[cab]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[bca]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[cba]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[acb]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[bac]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_nested_user_order",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_share_all",
+                "lib/matplotlib/tests/test_figure.py::test_reused_gridspec",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_tightbbox",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_dpi",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_ss[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_double[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_spanning",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_ticks",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_scatter_size[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_pdf",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_kwargs",
+                "lib/matplotlib/tests/test_figure.py::test_add_axes_kwargs",
+                "lib/matplotlib/tests/test_figure.py::test_ginput",
+                "lib/matplotlib/tests/test_figure.py::test_waitforbuttonpress",
+                "lib/matplotlib/tests/test_figure.py::test_kwargs_pass",
+                "lib/matplotlib/tests/test_figure.py::test_deepcopy"
+              ],
+              "failure": []
+            },
+            "FAIL_TO_FAIL": {
+              "success": [],
+              "failure": []
+            },
+            "PASS_TO_FAIL": {
+              "success": [],
+              "failure": []
+            }
+          },
+          "token_usage": {
+            "prompt_tokens": 3234326,
+            "completion_tokens": 26762,
+            "cache_read_tokens": 3166695,
+            "cache_write_tokens": 0,
+            "total_tokens": 3261088
+          },
+          "agent_actions": 93,
+          "tool_use_stats": {
+            "think": {
+              "count": 2,
+              "successful": 2,
+              "failed": 0
+            },
+            "terminal": {
+              "count": 46,
+              "successful": 46,
+              "failed": 0
+            },
+            "file_editor": {
+              "count": 39,
+              "successful": 39,
+              "failed": 0
+            },
+            "fuzz_hypo": {
+              "count": 5,
+              "successful": 5,
+              "failed": 0
+            },
+            "finish": {
+              "count": 1,
+              "successful": 1,
+              "failed": 0
+            }
+          },
+          "duration_seconds": 627.145266,
+          "max_iterations_reached": false,
+          "error_info": {
+            "error_type": null,
+            "error_message": null,
+            "error_details": null
+          }
+        },
+        "claude-opus-4.5_sdk_73769d5_maxiter_200_N_initial": {
+          "resolved": false,
+          "patch": "diff --git a/lib/matplotlib/backend_bases.py b/lib/matplotlib/backend_bases.py\nindex 9ae2982c62..99d0eee214 100644\n--- a/lib/matplotlib/backend_bases.py\n+++ b/lib/matplotlib/backend_bases.py\n@@ -1653,7 +1653,8 @@ class FigureCanvasBase:\n         self.toolbar = None  # NavigationToolbar2 will set me\n         self._is_idle_drawing = False\n         # We don't want to scale up the figure DPI more than once.\n-        figure._original_dpi = figure.dpi\n+        if not hasattr(figure, '_original_dpi'):\n+            figure._original_dpi = figure.dpi\n         self._device_pixel_ratio = 1\n         super().__init__()  # Typically the GUI widget init (if any).\n \n",
+          "tests_status": {
+            "FAIL_TO_PASS": {
+              "success": [],
+              "failure": [
+                "lib/matplotlib/tests/test_figure.py::test_unpickle_with_device_pixel_ratio"
+              ]
+            },
+            "PASS_TO_PASS": {
+              "success": [
+                "lib/matplotlib/tests/test_figure.py::test_align_labels[png]",
+                "lib/matplotlib/tests/test_figure.py::test_align_labels_stray_axes",
+                "lib/matplotlib/tests/test_figure.py::test_figure_label",
+                "lib/matplotlib/tests/test_figure.py::test_fignum_exists",
+                "lib/matplotlib/tests/test_figure.py::test_clf_keyword",
+                "lib/matplotlib/tests/test_figure.py::test_figure[png]",
+                "lib/matplotlib/tests/test_figure.py::test_figure[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_legend[png]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_legend[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_gca",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_subclass",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_invalid",
+                "lib/matplotlib/tests/test_figure.py::test_suptitle[png]",
+                "lib/matplotlib/tests/test_figure.py::test_suptitle[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_suptitle_fontproperties",
+                "lib/matplotlib/tests/test_figure.py::test_alpha[png]",
+                "lib/matplotlib/tests/test_figure.py::test_too_many_figures",
+                "lib/matplotlib/tests/test_figure.py::test_iterability_axes_argument",
+                "lib/matplotlib/tests/test_figure.py::test_set_fig_size",
+                "lib/matplotlib/tests/test_figure.py::test_axes_remove",
+                "lib/matplotlib/tests/test_figure.py::test_figaspect",
+                "lib/matplotlib/tests/test_figure.py::test_autofmt_xdate[both]",
+                "lib/matplotlib/tests/test_figure.py::test_autofmt_xdate[major]",
+                "lib/matplotlib/tests/test_figure.py::test_autofmt_xdate[minor]",
+                "lib/matplotlib/tests/test_figure.py::test_change_dpi",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_size[1-nan]",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_size[-1-1]",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_size[inf-1]",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_figure_add_axes",
+                "lib/matplotlib/tests/test_figure.py::test_subplots_shareax_loglabels",
+                "lib/matplotlib/tests/test_figure.py::test_savefig",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_warns",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_backend",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_pixel_ratio[Agg]",
+                "lib/matplotlib/tests/test_figure.py::test_savefig_pixel_ratio[Cairo]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_repr",
+                "lib/matplotlib/tests/test_figure.py::test_valid_layouts",
+                "lib/matplotlib/tests/test_figure.py::test_invalid_layouts",
+                "lib/matplotlib/tests/test_figure.py::test_add_artist[png]",
+                "lib/matplotlib/tests/test_figure.py::test_add_artist[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[png]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[ps]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[eps]",
+                "lib/matplotlib/tests/test_figure.py::test_fspath[svg]",
+                "lib/matplotlib/tests/test_figure.py::test_tightbbox",
+                "lib/matplotlib/tests/test_figure.py::test_axes_removal",
+                "lib/matplotlib/tests/test_figure.py::test_removed_axis",
+                "lib/matplotlib/tests/test_figure.py::test_figure_clear[clear]",
+                "lib/matplotlib/tests/test_figure.py::test_figure_clear[clf]",
+                "lib/matplotlib/tests/test_figure.py::test_clf_not_redefined",
+                "lib/matplotlib/tests/test_figure.py::test_picking_does_not_stale",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_twotuple",
+                "lib/matplotlib/tests/test_figure.py::test_animated_with_canvas_change[pdf]",
+                "lib/matplotlib/tests/test_figure.py::test_animated_with_canvas_change[eps]",
+                "lib/matplotlib/tests/test_figure.py::test_animated_with_canvas_change[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_basic[x0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_basic[x1-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_all_nested[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_nested[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_nested_tuple[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x0-None-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x1-SKIP-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x2-0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x3-None-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x4-SKIP-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_empty[x5-0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail_list_of_str",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_subplot_kw[subplot_kw0-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_subplot_kw[subplot_kw1-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_subplot_kw[None-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_string_parser",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_single_str_input[AAA\\nBBB-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_single_str_input[\\nAAA\\nBBB\\n-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_single_str_input[ABC\\nDEF-png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[x0-(?m)we",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[x1-There",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[AAA\\nc\\nBBB-All",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_fail[x3-All",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_hashable_keys[png]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[abc]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[cab]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[bca]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[cba]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[acb]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_user_order[bac]",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_nested_user_order",
+                "lib/matplotlib/tests/test_figure.py::TestSubplotMosaic::test_share_all",
+                "lib/matplotlib/tests/test_figure.py::test_reused_gridspec",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_tightbbox",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_dpi",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_ss[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_double[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_spanning",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_ticks",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_scatter_size[png]",
+                "lib/matplotlib/tests/test_figure.py::test_subfigure_pdf",
+                "lib/matplotlib/tests/test_figure.py::test_add_subplot_kwargs",
+                "lib/matplotlib/tests/test_figure.py::test_add_axes_kwargs",
+                "lib/matplotlib/tests/test_figure.py::test_ginput",
+                "lib/matplotlib/tests/test_figure.py::test_waitforbuttonpress",
+                "lib/matplotlib/tests/test_figure.py::test_kwargs_pass",
+                "lib/matplotlib/tests/test_figure.py::test_deepcopy"
+              ],
+              "failure": []
+            },
+            "FAIL_TO_FAIL": {
+              "success": [],
+              "failure": []
+            },
+            "PASS_TO_FAIL": {
+              "success": [],
+              "failure": []
+            }
+          },
+          "token_usage": {
+            "prompt_tokens": 1694448,
+            "completion_tokens": 11807,
+            "cache_read_tokens": 1648140,
+            "cache_write_tokens": 0,
+            "total_tokens": 1706255
+          },
+          "agent_actions": 52,
+          "tool_use_stats": {
+            "think": {
+              "count": 2,
+              "successful": 2,
+              "failed": 0
+            },
+            "terminal": {
+              "count": 33,
+              "successful": 33,
+              "failed": 0
+            },
+            "file_editor": {
+              "count": 16,
+              "successful": 16,
+              "failed": 0
+            },
+            "finish": {
+              "count": 1,
+              "successful": 1,
+              "failed": 0
+            }
+          },
+          "duration_seconds": 355.016264,
+          "max_iterations_reached": false,
+          "error_info": {
+            "error_type": null,
+            "error_message": null,
+            "error_details": null
+          }
+        }
+      }
+    }
+  }
+}
