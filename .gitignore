@@ -208,6 +208,7 @@ workspace/
 .openhands/*
 !.openhands/setup.sh
 !.openhands/microagents/
+!.openhands/skills/
 .vscode/
 
 # LLM configuration directory (contains API keys and sensitive configs)
