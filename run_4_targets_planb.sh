@@ -225,8 +225,8 @@ echo "Phase 3: Running SWE-bench Evaluation"
 echo "=========================================="
 echo ""
 
-OUTPUT_JSONL="./evaluation_results/eval_planb_4tasks/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/output.jsonl"
-RESULTS_JSONL="./evaluation_results/eval_planb_4tasks/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}/results.swebench.jsonl"
+OUTPUT_JSONL="./evaluation_results/eval_planb_4tasks/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/output.jsonl"
+RESULTS_JSONL="./evaluation_results/eval_planb_4tasks/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/results.swebench.jsonl"
 
 if [[ ! -f "$OUTPUT_JSONL" ]]; then
     echo "❌ 错误: 找不到输出文件: $OUTPUT_JSONL"
@@ -334,7 +334,7 @@ python3 -c "import sys; sys.exit(0)" "$RESULTS_JSONL"
     echo ""
 
     # Check for skill invocation in conversation logs
-    RESULT_DIR="./evaluation_results/eval_planb_4tasks/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL_PATH_SUFFIX}"
+    RESULT_DIR="./evaluation_results/eval_planb_4tasks/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial"
 
     if [[ -d "$RESULT_DIR" ]]; then
         echo "检查各实例是否调用了 /verify-before-submit skill:"
