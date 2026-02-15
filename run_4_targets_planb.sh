@@ -109,7 +109,7 @@ SDK_SHORT_SHA="${SDK_SHA:0:7}"
 # Build output path components
 DATASET_SANITIZED=${DATASET_NAME//\\//__}
 DATASET_PATH="${DATASET_SANITIZED}-${SPLIT}"
-MODEL_PATH_SUFFIX="${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_planb"
+MODEL_PATH_SUFFIX="${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial"
 
 # Extract subdirectory name from instances file
 INSTANCES_SUBDIR=$(basename "$INSTANCES_FILE" .txt)
@@ -190,7 +190,7 @@ echo "=========================================="
 echo "Phase 2: Running Inference (Plan B - Skill-Based)"
 echo "=========================================="
 echo ""
-echo "Prompt: benchmarks/swebench/prompts/verification_enhanced.j2 (包含 skill 调用提示)"
+echo "Prompt: benchmarks/swebench/prompts/verification_skill_trigger.j2 (强制调用 skill)"
 echo "Skill:  .openhands/skills/verify-before-submit.md"
 echo "Output: evaluation_results/eval_planb_4tasks/$INSTANCES_SUBDIR"
 echo ""
@@ -203,7 +203,7 @@ uv run swebench-infer "$LLM_CONFIG" \
     --max-iterations 200 \
     --max-retries 1 \
     --num-workers "$NUM_WORKERS" \
-    --prompt-path benchmarks/swebench/prompts/verification_enhanced.j2 \
+    --prompt-path benchmarks/swebench/prompts/verification_skill_trigger.j2 \
     --n-limit "$N_LIMIT"
 
 if [[ $? -ne 0 ]]; then
