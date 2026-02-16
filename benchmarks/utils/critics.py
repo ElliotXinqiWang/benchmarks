@@ -21,6 +21,28 @@ from openhands.sdk.critic import (
 )
 from openhands.sdk.event import LLMConvertibleEvent
 
+# CRITICAL: Import all extra tools to ensure their Action/Observation classes
+# are registered in the discriminated union BEFORE we try to deserialize EvalOutput.
+# When get_completed_instances() or get_failed_instances() call EvalOutput.model_validate(),
+# Pydantic needs to know about all possible Action/Observation types.
+# Each extra tool's __init__.py calls rebuild_all() to rebuild the discriminated union.
+try:
+    import openhands.tools.fuzz_hypo  # noqa: F401
+except ImportError:
+    pass
+try:
+    import openhands.tools.fuzz_hypo_v2  # noqa: F401
+except ImportError:
+    pass
+try:
+    import openhands.tools.fuzz_hypo_agent  # noqa: F401
+except ImportError:
+    pass
+try:
+    import openhands.tools.test_oracle  # noqa: F401
+except ImportError:
+    pass
+
 logger = get_logger(__name__)
 
 

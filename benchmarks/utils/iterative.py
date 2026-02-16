@@ -9,6 +9,7 @@ import json
 import os
 from typing import Set
 
+# Import critics first to ensure extra tools are loaded (critics.py imports them)
 from benchmarks.utils.critics import CriticBase, evaluate_output
 from benchmarks.utils.models import EvalInstanceID, EvalOutput
 from openhands.sdk import get_logger
