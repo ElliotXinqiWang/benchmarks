@@ -42,6 +42,14 @@ try:
     import openhands.tools.test_oracle  # noqa: F401
 except ImportError:
     pass
+try:
+    import openhands.tools.test_generator  # noqa: F401
+except ImportError:
+    pass
+try:
+    import openhands.tools.test_generator_v2  # noqa: F401
+except ImportError:
+    pass
 
 logger = get_logger(__name__)
 
