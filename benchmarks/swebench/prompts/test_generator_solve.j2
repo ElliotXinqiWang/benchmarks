@@ -1,0 +1,76 @@
+I have access to a python code repository in the directory {{ instance.repo_path }} . You can explore and modify files using the available tools. Consider the following issue description:
+
+<issue_description>
+{{ instance.problem_statement }}
+</issue_description>
+
+Can you help me implement the necessary changes to the repository so that the requirements specified in the <issue_description> are met?
+I've already taken care of all changes to any of the test files described in the <issue_description>. This means you DON'T have to modify the testing logic or any of the tests in any way!
+Also the development Python environment is already set up for you (i.e., all dependencies already installed), so you don't need to install other packages.
+Your task is to make the minimal changes to non-test files in the {{ instance.repo_path }} directory to ensure the <issue_description> is satisfied.
+
+Follow these phases to resolve the issue:
+
+Phase 1. SETUP: Prepare the environment
+   1.1 Run: source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed
+   1.2 Run: cd {{ instance.repo_path }} && pip install -e . --no-deps
+       This is CRITICAL: Python imports use the installed package, not the source files directly.
+
+Phase 2. GENERATE VERIFICATION TESTS: Use test_generator to create tests for this issue.
+   2.1 Call the test_generator tool:
+       test_generator(
+         command="generate",
+         issue_text="<paste the FULL issue description here>",
+         repo_path="{{ instance.repo_path }}",
+         setup_commands=["source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed", "cd {{ instance.repo_path }} && pip install -e . --no-deps"],
+         test_framework="pytest"
+       )
+   2.2 Note the test_script_path and the F2P/P2P test lists from the response.
+   2.3 Read the generated test script to understand what the tests verify.
+
+Phase 3. VERIFY BASELINE: Run the generated tests to confirm F2P tests currently FAIL.
+   3.1 Call:
+       test_generator(
+         command="run",
+         test_script_path="<path from Phase 2>",
+         repo_path="{{ instance.repo_path }}",
+         setup_commands=["source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed", "cd {{ instance.repo_path }} && pip install -e . --no-deps"],
+         test_framework="pytest"
+       )
+   3.2 Expected: F2P tests FAIL, P2P tests PASS.
+       If F2P tests already pass, the issue may already be fixed - investigate.
+       If P2P tests fail, the test script may have bugs - review and adjust manually.
+
+Phase 4. EXPLORATION: Find the relevant code
+   4.1 Use grep to search for relevant methods, classes, keywords from the issue.
+   4.2 Read the source files to understand the problem.
+   4.3 Identify which files and functions need changes.
+   4.4 CRITICAL: If you modify a write/output/format function, check whether the corresponding read/input/parse function also needs changes. The same applies in reverse.
+   4.5 CRITICAL: If the issue suggests a fix, do NOT assume it is complete. Trace the full execution path and check if additional changes are needed.
+
+Phase 5. IMPLEMENT THE FIX
+   5.1 Make minimal, focused changes to fix the issue.
+   5.2 IMPORTANT: Reinstall the package after edits:
+       cd {{ instance.repo_path }} && pip install -e . --no-deps
+
+Phase 6. VERIFY FIX: Run the generated tests again to confirm F2P tests now PASS.
+   6.1 Call test_generator(command="run", ...) with the same parameters as Phase 3.
+   6.2 Required: ALL F2P tests must now PASS. ALL P2P tests must still PASS.
+   6.3 If ANY F2P test still fails:
+       - DO NOT call finish() yet
+       - Read the test output carefully to understand what's still wrong
+       - Go back to Phase 5 and revise your fix
+       - Re-run Phase 6 until ALL tests pass
+
+Phase 7. REGRESSION CHECK: Run existing tests
+   7.1 Run tests related to the files you modified:
+       python -m pytest tests/relevant_module/ -v --tb=short
+   7.2 If any previously-passing test now fails, fix the regression.
+
+Phase 8. FINAL SUBMISSION
+   8.1 Only call finish() when:
+       - ALL F2P tests PASS (verified in Phase 6)
+       - ALL P2P tests PASS (verified in Phase 6)
+       - No regressions (verified in Phase 7)
+
+Be thorough in your exploration, testing, and reasoning. It's fine if your thinking process is lengthy - quality and completeness are more important than brevity.

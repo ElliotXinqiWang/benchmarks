@@ -1,0 +1,56 @@
+I have access to a python code repository in the directory {{ instance.repo_path }}. Consider the following issue description:
+
+<issue_description>
+{{ instance.problem_statement }}
+</issue_description>
+
+Your ONLY task is to test the `test_generator_v2` tool. Do NOT try to fix the issue. Follow these steps exactly:
+
+Step 1: Set up the environment
+  Run these commands:
+  ```
+  source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed
+  cd {{ instance.repo_path }} && pip install -e . --no-deps
+  ```
+
+Step 2: Call test_generator_v2 with the "generate" command
+  Use the test_generator_v2 tool to generate test scripts for this issue:
+  ```
+  test_generator_v2(
+    command="generate",
+    issue_text="<paste the full issue description from above>",
+    repo_path="{{ instance.repo_path }}",
+    setup_commands=["source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed",
+                    "cd {{ instance.repo_path }} && pip install -e . --no-deps"],
+    test_framework="pytest"
+  )
+  ```
+
+Step 3: Inspect the generated test script
+  After the generate command returns:
+  - Read the generated test script file using file_editor (the path is in the response)
+  - Print the FULL content of the test script so we can inspect it in the logs
+  - Check: Does it have test_f2p_ functions? Does it have test_p2p_ functions?
+  - Check: Do the tests assert specific values (not just "no error")?
+  - Check: Is there a self_verification field in the response? What does it say?
+
+Step 4: Call test_generator_v2 with the "run" command
+  Run the generated tests to verify the F2P/P2P split:
+  ```
+  test_generator_v2(
+    command="run",
+    test_script_path="<the path from step 2>",
+    repo_path="{{ instance.repo_path }}",
+    setup_commands=["source /opt/miniconda3/etc/profile.d/conda.sh ; conda activate testbed"]
+  )
+  ```
+
+Step 5: Report results
+  After the run command returns:
+  - Print the test_results dictionary
+  - Report how many F2P tests FAILED (expected: should fail since issue is not fixed)
+  - Report how many P2P tests PASSED (expected: should pass since they test existing behavior)
+  - Report the self_verification summary from step 2
+  - Print any errors
+
+After completing all 5 steps, call finish.
