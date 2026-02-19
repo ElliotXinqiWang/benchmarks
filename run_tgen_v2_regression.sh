@@ -209,16 +209,14 @@ REGRESSION_INSTANCES = [
     "django__django-15022",
 ]
 
-results_file = "./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/results.swebench.jsonl"
+report_file = "./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/output.report.json"
 try:
-    results = {}
-    with open(results_file) as f:
-        for line in f:
-            data = json.loads(line)
-            iid = data.get("instance_id", "?")
-            results[iid] = data.get("resolved", False)
+    with open(report_file) as f:
+        report = json.load(f)
+    resolved_ids = set(report.get("resolved_ids", []))
+    results = {iid: (iid in resolved_ids) for iid in REGRESSION_INSTANCES}
 except FileNotFoundError:
-    print(f"❌ 找不到结果文件: {results_file}")
+    print(f"❌ 找不到结果文件: {report_file}")
     sys.exit(0)
 
 # Baselines from previous analysis
