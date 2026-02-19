@@ -162,11 +162,11 @@ echo "Phase 3: Running SWE-bench Evaluation"
 echo "=========================================="
 echo ""
 
-OUTPUT_JSONL="./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/openrouter/anthropic/${MODEL_PATH_SUFFIX}/output.jsonl"
-RESULTS_JSONL="./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/openrouter/anthropic/${MODEL_PATH_SUFFIX}/results.swebench.jsonl"
+OUTPUT_JSONL="./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/output.jsonl"
+RESULTS_JSONL="./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/results.swebench.jsonl"
 
 if [[ ! -f "$OUTPUT_JSONL" ]] || [[ ! -s "$OUTPUT_JSONL" ]]; then
-    ATTEMPT_JSONL="./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/openrouter/anthropic/${MODEL_PATH_SUFFIX}/output.critic_attempt_1.jsonl"
+    ATTEMPT_JSONL="./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/output.critic_attempt_1.jsonl"
     if [[ -f "$ATTEMPT_JSONL" ]]; then
         echo "⚠️  output.jsonl 为空，使用 output.critic_attempt_1.jsonl"
         OUTPUT_JSONL="$ATTEMPT_JSONL"
@@ -209,7 +209,7 @@ REGRESSION_INSTANCES = [
     "django__django-15022",
 ]
 
-results_file = "$RESULTS_JSONL"
+results_file = "./evaluation_results/${OUTPUT_NAME}/${INSTANCES_SUBDIR}/${DATASET_PATH}/${MODEL}_sdk_${SDK_SHORT_SHA}_maxiter_200_N_initial/results.swebench.jsonl"
 try:
     results = {}
     with open(results_file) as f:
